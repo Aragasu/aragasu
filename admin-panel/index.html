@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aragasu.xyz admin panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded&display=swap" rel="stylesheet">
+
+<style>
+    * { box-sizing: border-box; }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        color: #fff;
+        font-family: 'Unbounded', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    #login, #content, #ban {
+        max-width: 900px;
+        padding: 20px;
+    }
+
+    #content, #ban {
+        display: none;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+        margin-bottom: 30px;
+        font-weight: 500;
+    }
+
+    input, button {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        background: #000;
+        border: 1px solid #444;
+        color: #fff;
+        font-family: 'Unbounded', sans-serif;
+    }
+
+    button {
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #111;
+    }
+
+    .gradient {
+        background: linear-gradient(to right, #8e2de2, #ff00ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+    <h1>aragasu.xyz admin console</h1>
+    <input value="aragasu" readonly>
+    <input type="password" value="admin1234" readonly>
+    <button id="loginBtn">Login</button>
+</div>
+
+<!-- CONTENT -->
+<div id="content">
+    ha, ha. very funny, man... you really thought you could just put
+    <span class="gradient">/admin</span> behind the url and get to the admin panel?
+    what do you even think an admin panel would do on this page? change my socials?
+    i can edit the code, why would i need an admin console?
+    you should probably get banned for this...
+</div>
+
+<!-- BAN -->
+<div id="ban"></div>
+
+<audio id="audio">
+    <source src="why.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const loginBtn = document.getElementById('loginBtn');
+const login = document.getElementById('login');
+const content = document.getElementById('content');
+const ban = document.getElementById('ban');
+const audio = document.getElementById('audio');
+
+loginBtn.onclick = () => {
+    login.style.display = 'none';
+    content.style.display = 'block';
+    audio.play().catch(()=>{});
+
+    // Ban nach exakt 21.65 Sekunden
+    setTimeout(startBan, 21650);
+};
+
+function startBan() {
+    content.style.display = 'none';
+    ban.style.display = 'block';
+
+    let remaining = 120;
+    updateBanText(remaining);
+
+    const timer = setInterval(() => {
+        remaining--;
+        updateBanText(remaining);
+
+        if (remaining <= 0) {
+            clearInterval(timer);
+            postBanSequence();
+        }
+    }, 1000);
+}
+
+function updateBanText(sec) {
+    const m = Math.floor(sec / 60);
+    const s = String(sec % 60).padStart(2, '0');
+    ban.textContent = `Banned for ${m}m ${s}s`;
+}
+
+function postBanSequence() {
+    ban.textContent = "you're still here? why? just close the page already.";
+
+    setTimeout(() => {
+        ban.textContent = "fine i'll do it for you...";
+
+        setTimeout(() => {
+            window.close();
+        }, 2000);
+
+    }, 5000);
+}
+</script>
+
+</body>
+</html>

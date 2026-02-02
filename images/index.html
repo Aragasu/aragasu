@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>why?</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded&display=swap" rel="stylesheet">
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #000000;
+        color: #ffffff;
+        font-family: 'Unbounded', sans-serif;
+        text-align: center;
+        cursor: pointer;
+        overflow: hidden;
+    }
+
+    #clickScreen {
+        font-size: 2rem;
+    }
+
+    #content {
+        display: none;
+        padding: 20px;
+    }
+
+    .gradient-link {
+        background: linear-gradient(to right, #8e2de2, #ff00ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+
+    .delayed-link {
+        color: #ffffff;
+        text-decoration: underline;
+        cursor: not-allowed;
+    }
+
+    .delayed-link.active {
+        cursor: pointer;
+        color: #0000ff; /* Blau wenn aktiv */
+    }
+</style>
+</head>
+<body>
+
+<div id="clickScreen">Click Me</div>
+
+<div id="content">
+    why are you here? no really, tell me why you decided to go through the github repository of this page, saw the 
+    <span class="gradient-link">/images</span> folder and thought "yeah, theres probably something interesting in there, let me open https://aragasu.xyz<span class="gradient-link">/images</span> and see whats in there." 
+    are you happy now? are you satisfied? here, let me give you 
+    <span id="delayedLink" class="delayed-link">something to look at</span>.
+</div>
+
+<audio id="audio">
+    <source src="why.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const clickScreen = document.getElementById('clickScreen');
+const content = document.getElementById('content');
+const audio = document.getElementById('audio');
+const link = document.getElementById('delayedLink');
+const targetURL = 'https://aragasu.xyz/something-to-look-at';
+
+clickScreen.addEventListener('click', () => {
+    clickScreen.style.display = 'none';
+    content.style.display = 'block';
+    audio.play().catch(err => console.log('Audio konnte nicht abgespielt werden:', err));
+
+    // Nach 25 Sekunden den Link aktivieren
+    setTimeout(() => {
+        link.classList.add('active');
+        link.addEventListener('click', () => {
+            window.location.href = targetURL;
+        });
+    }, 23000);
+});
+</script>
+
+</body>
+</html>

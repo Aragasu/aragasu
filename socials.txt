@@ -1,0 +1,27 @@
+YouTube
+https://youtube.com/@jxstaragasu
+fab fa-youtube
+
+GitHub
+https://github.com/Aragasu
+fab fa-github
+
+Discord
+https://discord.com/users/873234979239383040
+fab fa-discord
+
+Steam
+https://steamcommunity.com/id/aragasu/
+fab fa-steam
+
+Twitch
+https://twitch.tv/aragasu
+fab fa-twitch
+
+Email
+mailto:contact@aragasu.xyz
+fas fa-envelope
+
+Website
+https://aragasu.xyz
+fas fa-globe
