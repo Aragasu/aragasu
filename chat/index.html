@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aragasu.xyz public chat</title>
+<style>
+:root{
+  --bg:#0b0612;--panel:rgba(255,255,255,.06);--accent:#9b5cff;
+  --text:#f2f2f2;--muted:#b6a9c9;--blur:blur(18px);--radius:22px;
+  --danger:#ff5c7a;
+}
+*{box-sizing:border-box;font-family:system-ui}
+body{
+  margin:0;background:radial-gradient(circle at top,#2a0f44,var(--bg));
+  color:var(--text);min-height:100vh;
+}
+.app{display:flex;height:100vh}
+.chat{flex:1;display:flex;flex-direction:column}
+.panel{
+  background:var(--panel);backdrop-filter:var(--blur);
+  border:1px solid rgba(255,255,255,.08);border-radius:var(--radius)
+}
+.messages{flex:1;padding:16px;overflow:auto}
+.msg{margin-bottom:12px}
+.name{color:var(--accent);font-weight:600;font-size:.85rem}
+.text{color:var(--muted)}
+.input{display:flex;gap:10px;padding:12px}
+input,button{
+  background:rgba(0,0,0,.3);border:none;border-radius:999px;
+  padding:10px 14px;color:var(--text)
+}
+button{cursor:pointer;background:linear-gradient(135deg,#9b5cff,#6d28d9)}
+.top-right{
+  position:absolute;top:20px;right:20px;width:240px;padding:16px
+}
+.admin{width:360px;border-left:1px solid rgba(255,255,255,.08);padding:16px;overflow:auto}
+.admin h3{margin-top:0}
+.user{display:flex;gap:6px;margin-bottom:6px}
+.user button{padding:4px 8px;font-size:.75rem}
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);
+  display:flex;align-items:center;justify-content:center
+}
+.modal .panel{padding:24px;width:300px}
+.hidden{display:none}
+.small{font-size:.75rem;color:var(--muted)}
+.delete{color:var(--danger);cursor:pointer;font-size:.75rem}
+</style>
+</head>
+<body>
+
+<!-- Username Modal -->
+<div class="modal" id="loginModal">
+  <div class="panel">
+    <h3>Enter username</h3>
+    <input id="usernameInput" placeholder="username">
+    <br><br>
+    <button onclick="login()">Join</button>
+  </div>
+</div>
+
+<div class="top-right panel">
+  <div id="gameName">No game set</div>
+  <div class="small" id="gameLobby">—</div>
+  <br>
+  <a id="gameLink" href="#" target="_blank"><button>Join Game</button></a>
+</div>
+
+<div class="app">
+  <div class="chat">
+    <div class="messages" id="messages"></div>
+    <div class="input">
+      <input id="msgInput" placeholder="Message">
+      <button onclick="send()">Send</button>
+    </div>
+  </div>
+
+  <div class="admin hidden" id="adminPanel">
+    <h3>Admin Panel</h3>
+
+    <h4>Users</h4>
+    <div id="users"></div>
+
+    <h4>Mini Chat</h4>
+    <div id="miniChat"></div>
+
+    <h4>Current Game</h4>
+    <input id="gName" placeholder="Game name">
+    <input id="gLobby" placeholder="Lobby / Server">
+    <input id="gLink" placeholder="Join link">
+    <button onclick="updateGame()">Update</button>
+    <br><br>
+    <button onclick="confirmClear()">Clear Chat</button>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig={
+  apiKey:"AIzaSyBYwzJWY03Z33HPvKjL25yKpj166WgjoMg",
+  authDomain:"aragasu-xyz.firebaseapp.com",
+  projectId:"aragasu-xyz",
+  databaseURL:"https://aragasu-xyz-default-rtdb.firebaseio.com"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+const chat=db.ref("chat");
+const users=db.ref("users");
+const game=db.ref("game");
+
+const params=new URLSearchParams(location.search);
+const isAdmin=params.has("admin");
+let username=null;
+
+const messagesDiv=document.getElementById("messages");
+const miniChat=document.getElementById("miniChat");
+const usersDiv=document.getElementById("users");
+const msgInput=document.getElementById("msgInput");
+
+if(isAdmin){
+  const pw=prompt("Admin password:");
+  if(pw!=="_jxstShadow") location.href=location.pathname;
+  document.getElementById("adminPanel").classList.remove("hidden");
+}
+
+function login(){
+  username=document.getElementById("usernameInput").value;
+  if(!username) return;
+  document.getElementById("loginModal").classList.add("hidden");
+  users.child(username).set({muted:false});
+}
+
+// Send message
+function send(){
+  if(!username) return;
+  users.child(username+"/muted").get().then(s=>{
+    if(s.val()) return;
+    chat.push({name:username,text:msgInput.value,time:Date.now()});
+    msgInput.value="";
+  });
+}
+
+// Send on Enter
+msgInput.addEventListener("keydown", e => {
+  if (e.key==="Enter" && !e.shiftKey){ e.preventDefault(); send(); }
+});
+
+// Load chat (all messages)
+chat.on("child_added",s=>{
+  const m=s.val(),k=s.key;
+  messagesDiv.innerHTML+=`<div class="msg"><div class="name">${m.name}</div><div class="text">${m.text}</div></div>`;
+  if(isAdmin){
+    miniChat.innerHTML+=`<div class="small">${m.name}: ${m.text} <span class="delete" onclick="chat.child('${k}').remove()">delete</span></div>`;
+  }
+  messagesDiv.scrollTop=messagesDiv.scrollHeight;
+});
+
+// Users list
+users.on("value",s=>{
+  usersDiv.innerHTML="";
+  s.forEach(u=>{
+    usersDiv.innerHTML+=`
+      <div class="user">
+        <span>${u.key}</span>
+        <button onclick="users.child('${u.key}/muted').set(true)">mute</button>
+        <button onclick="rename('${u.key}')">rename</button>
+      </div>`;
+  });
+});
+
+// Rename user
+function rename(old){
+  const n=prompt("New name:");
+  if(!n) return;
+  users.child(n).set(users.child(old).get());
+  users.child(old).remove();
+}
+
+// Game info
+game.on("value",s=>{
+  const g=s.val()||{};
+  document.getElementById("gameName").innerText=g.name||"No game";
+  document.getElementById("gameLobby").innerText=g.lobby||"";
+  document.getElementById("gameLink").href=g.link||"#";
+});
+function updateGame(){
+  game.set({
+    name:document.getElementById("gName").value,
+    lobby:document.getElementById("gLobby").value,
+    link:document.getElementById("gLink").value
+  });
+}
+
+// Confirm Clear Chat
+function confirmClear(){
+  if(confirm("Are you sure you want to clear the entire chat?")){
+    clearChat();
+  }
+}
+function clearChat(){
+  if(!isAdmin) return;
+  chat.remove();
+  messagesDiv.innerHTML="";
+  miniChat.innerHTML="";
+}
+
+// Auto-clear inactive chat (3 hours)
+function autoClear(){
+  chat.once("value", snapshot=>{
+    let oldest=Infinity;
+    snapshot.forEach(child=>{
+      const m=child.val();
+      if(m.time<oldest) oldest=m.time;
+    });
+    if(oldest===Infinity) return;
+    if(Date.now()-oldest>3*60*60*1000){ // 3h
+      chat.remove();
+      messagesDiv.innerHTML="";
+      if(isAdmin) miniChat.innerHTML="";
+    }
+  });
+}
+setInterval(autoClear,5*60*1000); // check every 5 min
+</script>
+</body>
+</html>
