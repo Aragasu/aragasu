@@ -2,22 +2,23 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Aragasu's Essentials</title>
+    <title>Download</title>
 
     <!-- Google Font: Unbounded -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
         html, body {
             margin: 0;
-            padding: 0;
             width: 100%;
             height: 100%;
             background: #000;
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-family: 'Unbounded', sans-serif;
+            align-items: center;
+            font-family: 'Unbounded', system-ui, sans-serif;
         }
 
         a {
@@ -25,29 +26,43 @@
         }
 
         button {
+            font-family: 'Unbounded', system-ui, sans-serif;
             background: #fff;
             color: #000;
             border: none;
-            padding: 20px 40px;
+            padding: 18px 44px;
             font-size: 18px;
             font-weight: 600;
+            border-radius: 999px;
             cursor: pointer;
-            transition: transform 0.1s ease, background 0.1s ease;
+
+            /* Glow */
+            box-shadow:
+                0 0 20px rgba(255,255,255,0.35),
+                0 0 40px rgba(255,255,255,0.15);
+
+            transition:
+                transform 0.12s ease,
+                box-shadow 0.12s ease;
         }
 
         button:hover {
-            background: #e5e5e5;
-            transform: scale(1.03);
+            transform: scale(1.05);
+            box-shadow:
+                0 0 30px rgba(255,255,255,0.6),
+                0 0 70px rgba(255,255,255,0.35);
         }
 
         button:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
+            box-shadow:
+                0 0 15px rgba(255,255,255,0.4);
         }
     </style>
 </head>
 <body>
 
-    <a href="aragasu-essentials.zip" download>
+    <a href="aragasus-essentials.zip" download>
         <button>Download</button>
     </a>
 
