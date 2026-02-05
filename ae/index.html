@@ -22,9 +22,15 @@
         font-family: 'Unbounded', system-ui, sans-serif;
     }
 
+    canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+    }
+
     a {
-        text-decoration: none;
         z-index: 2;
+        text-decoration: none;
     }
 
     button {
@@ -49,47 +55,71 @@
             0 0 30px rgba(255,255,255,0.6),
             0 0 70px rgba(255,255,255,0.35);
     }
-
-    /* Mouse trail particle */
-    .trail {
-        position: fixed;
-        width: 10px;
-        height: 10px;
-        background: radial-gradient(circle, #b84cff, transparent 70%);
-        pointer-events: none;
-        border-radius: 50%;
-        animation: fade 0.6s linear forwards;
-        filter: blur(1px);
-        z-index: 1;
-    }
-
-    @keyframes fade {
-        to {
-            opacity: 0;
-            transform: scale(2);
-        }
-    }
 </style>
 </head>
 <body>
+
+<canvas id="trail"></canvas>
 
 <a href="aragasus-essentials.zip" download>
     <button>Download</button>
 </a>
 
 <script>
-    document.addEventListener("mousemove", e => {
-        const trail = document.createElement("div");
-        trail.className = "trail";
-        trail.style.left = e.clientX + "px";
-        trail.style.top = e.clientY + "px";
+const canvas = document.getElementById("trail");
+const ctx = canvas.getContext("2d");
 
-        document.body.appendChild(trail);
+let points = [];
+const maxPoints = 25;
 
-        setTimeout(() => {
-            trail.remove();
-        }, 600);
-    });
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+function addPoint(x, y) {
+    points.push({ x, y });
+    if (points.length > maxPoints) points.shift();
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (points.length < 2) return;
+
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+
+    for (let i = 1; i < points.length - 1; i++) {
+        const xc = (points[i].x + points[i + 1].x) / 2;
+        const yc = (points[i].y + points[i + 1].y) / 2;
+        ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+    }
+
+    ctx.strokeStyle = "rgba(185, 90, 255, 0.8)";
+    ctx.lineWidth = 6;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.shadowBlur = 25;
+    ctx.shadowColor = "#b95aff";
+    ctx.stroke();
+
+    requestAnimationFrame(draw);
+}
+draw();
+
+/* Mouse */
+document.addEventListener("mousemove", e => {
+    addPoint(e.clientX, e.clientY);
+});
+
+/* Touch (mobile) */
+document.addEventListener("touchmove", e => {
+    const t = e.touches[0];
+    if (t) addPoint(t.clientX, t.clientY);
+}, { passive: true });
 </script>
 
 </body>
