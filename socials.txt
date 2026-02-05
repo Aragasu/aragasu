@@ -1,7 +1,3 @@
-YouTube
-https://youtube.com/@jxstaragasu
-fab fa-youtube
-
 GitHub
 https://github.com/Aragasu
 fab fa-github
@@ -13,10 +9,6 @@ fab fa-discord
 Steam
 https://steamcommunity.com/id/aragasu/
 fab fa-steam
-
-Twitch
-https://twitch.tv/aragasu
-fab fa-twitch
 
 Email
 mailto:contact@aragasu.xyz
