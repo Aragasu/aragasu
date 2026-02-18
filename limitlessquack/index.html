@@ -1,175 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Limitless Quack</title>
-
-  <style>
-    :root {
-      --bg: #0b0612;
-      --panel: rgba(255,255,255,0.06);
-      --accent: #9b5cff;
-      --text: #f2f2f2;
-      --muted: #b6a9c9;
-      --blur: blur(18px);
-      --radius: 22px;
-    }
-
-    * {
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    body {
-      margin: 0;
-      background: radial-gradient(circle at top, #2a0f44, var(--bg));
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 32px 20px 80px;
-    }
-
-    .hero {
-      text-align: center;
-      margin-bottom: 48px;
-    }
-
-    .hero-icon {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 24px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #7c3aed, #4c1d95);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 60px rgba(155,92,255,0.35);
-      overflow: hidden;
-    }
-
-    .hero-icon img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    h1 {
-      font-size: clamp(2.2rem, 5vw, 3rem);
-      margin: 0 0 12px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 1.1rem;
-    }
-
-    .panel {
-      background: var(--panel);
-      backdrop-filter: var(--blur);
-      border-radius: var(--radius);
-      padding: 28px;
-      margin-bottom: 28px;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .panel h2 {
-      margin-top: 0;
-      margin-bottom: 12px;
-      font-size: 1.4rem;
-    }
-
-    .panel p {
-      margin: 0;
-      line-height: 1.6;
-      color: var(--muted);
-    }
-
-    .cta {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 16px;
-    }
-
-    .cta a {
-      text-decoration: none;
-      text-align: center;
-      padding: 16px 20px;
-      border-radius: 999px;
-      font-weight: 600;
-      transition: transform .15s ease, box-shadow .15s ease;
-    }
-
-    .primary {
-      background: linear-gradient(135deg, #9b5cff, #6d28d9);
-      color: white;
-      box-shadow: 0 10px 40px rgba(155,92,255,0.4);
-    }
-
-    .primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 50px rgba(155,92,255,0.6);
-    }
-
-    .secondary {
-      background: rgba(255,255,255,0.08);
-      color: var(--text);
-    }
-
-    footer {
-      text-align: center;
-      color: #7c6a91;
-      font-size: 0.85rem;
-      margin-top: 60px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Redirecting…</title>
 </head>
+<body style="background:black; margin:0;">
 
-<body>
-  <div class="container">
+<script>
+    // Öffnet die eigentliche Seite per Script
+    const win = window.open(
+        'https://limitlessquack.xyz/', // <-- DEINE HAUPTDATEI
+        '_self'
+    );
 
-    <section class="hero">
-      <div class="hero-icon">
-        <img src="lq.webp" alt="Limitless Quack Logo">
-      </div>
-      <h1>Limitless Quack</h1>
-      <div class="subtitle">
-        Small independent Roblox development group
-      </div>
-    </section>
+    // Fallback: falls Browser zickt
+    if (!win) {
+        window.location.href = 'https://limitlessquack.xyz/';
+    }
+</script>
 
-    <section class="panel">
-      <h2>Who We Are</h2>
-      <p>
-        Limitless Quack is a small Roblox developer group consisting of only 3 people.
-        <br><br>
-      </p>
-    </section>
-
-    <section class="panel">
-      <h2>Current Focus</h2>
-      <p>
-        🧪 Game: <strong>Escape Tsunami for Cars</strong><br>
-      </p>
-
-      <div class="cta">
-        <a class="primary"
-           href="https://www.roblox.com/de/communities/783291736/Limitless-Quack#!/about"
-           target="_blank">
-          View Roblox Group
-        </a>
-
-        <a class="secondary" href="https://aragasu.xyz/" target="_blank">
-          ← Back to Aragasu.xyz
-        </a>
-      </div>
-    </section>
-
-  </div>
 </body>
-          </html>
+</html>
