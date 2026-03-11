@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giftly | Simple Giveaway Bot</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Inter,sans-serif;
+}
+
+body{
+background: radial-gradient(circle at 20% 10%, #3b0764, #050008 75%);
+color:white;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+/* background glow */
+
+.bg1{
+position:fixed;
+width:900px;
+height:900px;
+background:radial-gradient(circle,#6d28d9,transparent 70%);
+filter:blur(220px);
+top:-350px;
+left:-250px;
+z-index:-1;
+opacity:0.6;
+}
+
+.bg2{
+position:fixed;
+width:900px;
+height:900px;
+background:radial-gradient(circle,#4c1d95,transparent 70%);
+filter:blur(220px);
+bottom:-350px;
+right:-250px;
+z-index:-1;
+opacity:0.6;
+}
+
+/* header */
+
+header{
+width:100%;
+padding:30px;
+display:flex;
+justify-content:center;
+}
+
+.title{
+font-size:42px;
+font-weight:700;
+letter-spacing:1px;
+}
+
+/* container */
+
+.container{
+width:100%;
+max-width:1000px;
+padding:20px;
+}
+
+/* bot card */
+
+.bot-card{
+display:flex;
+gap:20px;
+align-items:center;
+background:rgba(255,255,255,0.04);
+backdrop-filter:blur(12px);
+border-radius:16px;
+padding:25px;
+box-shadow:0 0 30px rgba(90,0,160,0.25);
+margin-bottom:40px;
+}
+
+/* avatar */
+
+.bot-avatar{
+width:90px;
+height:90px;
+border-radius:50%;
+overflow:hidden;
+flex-shrink:0;
+box-shadow:0 0 18px rgba(150,0,255,0.6);
+}
+
+.bot-avatar img{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:50%;
+}
+
+/* bot info */
+
+.bot-info h1{
+font-size:30px;
+margin-bottom:6px;
+}
+
+.subtitle{
+color:#c4b5fd;
+margin-bottom:10px;
+}
+
+.bot-info p{
+opacity:0.85;
+}
+
+/* invite */
+
+.invite{
+margin-left:auto;
+}
+
+.invite a{
+background:#000;
+padding:8px 18px;
+border-radius:8px;
+text-decoration:none;
+color:white;
+font-weight:500;
+font-size:14px;
+transition:0.2s;
+border:1px solid rgba(255,255,255,0.15);
+}
+
+.invite a:hover{
+background:#111;
+box-shadow:0 0 10px rgba(255,255,255,0.15);
+}
+
+/* sections */
+
+.section{
+background:rgba(255,255,255,0.04);
+border-radius:16px;
+padding:30px;
+margin-bottom:30px;
+backdrop-filter:blur(10px);
+box-shadow:0 0 20px rgba(80,0,150,0.2);
+}
+
+.section h2{
+margin-bottom:15px;
+font-size:22px;
+}
+
+/* features grid */
+
+.features{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+.feature{
+background:rgba(255,255,255,0.035);
+padding:18px;
+border-radius:10px;
+}
+
+.feature b{
+display:block;
+margin-bottom:5px;
+}
+
+/* footer */
+
+.footer{
+opacity:0.5;
+text-align:center;
+padding:40px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg1"></div>
+<div class="bg2"></div>
+
+<header>
+<div class="title">Giftly</div>
+</header>
+
+<div class="container">
+
+<div class="bot-card">
+
+<div class="bot-avatar">
+<img src="giftly.webp" alt="Giftly Bot">
+</div>
+
+<div class="bot-info">
+<h1>Giftly</h1>
+<div class="subtitle">Simple, Clean Giveaway Bot | Early Testing</div>
+<p>
+A lightweight giveaway bot focused on simplicity and clean design.
+Currently in early testing but already cleaner than many large giveaway bots.
+</p>
+</div>
+
+<div class="invite">
+<a href="https://discord.com/oauth2/authorize?client_id=1481298368654348358&permissions=8&integration_type=0&scope=bot+applications.commands">
+Invite
+</a>
+</div>
+
+</div>
+
+<div class="section">
+<h2>About</h2>
+
+<p>
+Giftly is designed to be a <b>simple and clean giveaway bot</b>.
+Instead of adding hundreds of confusing features, the goal is to keep everything
+<strong>lightweight, fast and easy to use</strong>.
+</p>
+
+<br>
+
+<p>
+The bot is currently in an <b>early testing stage</b>, meaning features are still
+being improved and expanded.
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>Features</h2>
+
+<div class="features">
+
+<div class="feature">
+<b>🎉 Button Entry</b>
+Users join giveaways with a single click.
+</div>
+
+<div class="feature">
+<b>⚡ Lightweight</b>
+Fast and simple without unnecessary features.
+</div>
+
+<div class="feature">
+<b>🔄 Reroll Winners</b>
+Select new winners anytime.
+</div>
+
+<div class="feature">
+<b>⏹ End Giveaways Early</b>
+Stop giveaways instantly with a command.
+</div>
+
+<div class="feature">
+<b>📋 Giveaway List</b>
+View all active giveaways on the server.
+</div>
+
+<div class="feature">
+<b>🧪 Early Development</b>
+More improvements and features coming soon.
+</div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>Why Giftly?</h2>
+
+<p>
+Many giveaway bots become overly complicated with too many settings and commands.
+Giftly focuses on doing <b>one thing well</b>: running giveaways simply and cleanly.
+</p>
+
+<br>
+
+<p>
+If you want a <b>minimal, easy-to-use giveaway bot</b>, Giftly might be exactly what your server needs.
+</p>
+
+</div>
+
+</div>
+
+<div class="footer">
+Giftly Giveaway Bot
+</div>
+
+</body>
+</html>
