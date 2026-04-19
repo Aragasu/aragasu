@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEBUG MODE - Backrooms Timer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        #timer {
+            color: #b5a369; 
+            font-size: clamp(2rem, 8vw, 4.5rem);
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            text-align: center;
+            transition: opacity 0.8s ease-in-out; /* Etwas schnellerer Fade für Debugging */
+            user-select: none;
+            z-index: 10;
+        }
+
+        #video-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hidden { opacity: 0; }
+    </style>
+</head>
+<body>
+
+    <div id="timer">00:00:00:03</div>
+
+    <div id="video-container">
+        <video id="bg-video" loop playsinline>
+            <source src="video.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <script>
+        // DEBUG SETTING: Timer läuft in 3 Sekunden ab
+        const targetDate = new Date(new Date().getTime() + 3000);
+
+        const timerDisplay = document.getElementById('timer');
+        const videoContainer = document.getElementById('video-container');
+        const videoElement = document.getElementById('bg-video');
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                // Timer auf Null fixieren
+                timerDisplay.innerText = "00:00:00:00";
+                
+                // Umschalten zum Video
+                timerDisplay.classList.add('hidden');
+                setTimeout(() => {
+                    timerDisplay.style.display = 'none';
+                    videoContainer.style.display = 'block';
+                    
+                    // Video abspielen
+                    videoElement.play().catch(() => {
+                        console.log("Autoplay blockiert - Video wird stumm gestartet");
+                        videoElement.muted = true;
+                        videoElement.play();
+                    });
+                }, 800);
+                
+                clearInterval(interval);
+                return;
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            timerDisplay.innerText = 
+                `${String(d).padStart(2, '0')}:${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        const interval = setInterval(updateCountdown, 100); // Häufigeres Update für smoothes Debugging
+        updateCountdown();
+    </script>
+</body>
+</html>
