@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Backrooms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            /* Font-Settings basierend auf dem Screenshot */
+            font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        #timer {
+            color: #b5a369; /* Der spezifische Gold/Messing-Ton aus dem Screenshot */
+            font-size: clamp(2rem, 8vw, 4.5rem);
+            font-weight: 500;
+            letter-spacing: -0.02em; /* Enge Buchstabenabstände wie im Bild */
+            text-align: center;
+            transition: opacity 1.5s ease-in-out;
+            user-select: none;
+        }
+
+        #video-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hidden { opacity: 0; }
+    </style>
+</head>
+<body>
+
+    <div id="timer">00:00:00:00</div>
+
+    <div id="video-container">
+        <video id="bg-video" loop playsinline>
+            <source src="video.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <script>
+        // Release-Daten nach Regionen (basierend auf offizieller Liste)
+        const releases = [
+            { date: "2026-05-27T00:00:00", zones: ["Europe/Rome", "Europe/Zurich"] },
+            { date: "2026-05-28T00:00:00", zones: ["Australia", "America/Sao_Paulo", "America/Lima"] },
+            { date: "2026-05-29T00:00:00", zones: ["America/New_York", "America/Los_Angeles", "Europe/London"] },
+            { date: "2026-06-04T00:00:00", zones: ["Europe/Berlin", "Europe/Vienna"] }, // Deutschland / Österreich
+            { date: "2026-06-17T00:00:00", zones: ["Europe/Paris"] },
+            { date: "2026-06-19T00:00:00", zones: ["Europe/Warsaw"] }
+        ];
+
+        function getTargetDate() {
+            try {
+                const userZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                const regionMatch = releases.find(r => r.zones.some(z => userZone.includes(z)));
+                return regionMatch ? new Date(regionMatch.date) : new Date("2026-05-29T00:00:00");
+            } catch (e) {
+                return new Date("2026-05-29T00:00:00");
+            }
+        }
+
+        const targetDate = getTargetDate();
+        const timerDisplay = document.getElementById('timer');
+        const videoContainer = document.getElementById('video-container');
+        const videoElement = document.getElementById('bg-video');
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                timerDisplay.classList.add('hidden');
+                setTimeout(() => {
+                    timerDisplay.style.display = 'none';
+                    videoContainer.style.display = 'block';
+                    videoElement.play().catch(() => {
+                        // Falls Autoplay geblockt wird, stumm starten
+                        videoElement.muted = true;
+                        videoElement.play();
+                    });
+                }, 1500);
+                clearInterval(interval);
+                return;
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            // Formatierung: 00:00:00:00
+            timerDisplay.innerText = 
+                `${String(d).padStart(2, '0')}:${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        const interval = setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
