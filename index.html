@@ -147,8 +147,17 @@ fetch('cards.txt')
     }
   })
   .catch(err => console.error('Failed to load cards.txt', err));</script>
-<a href="gamer-df4dd7a" target="_blank" class="ig-banner">
-  <img src="https://www.instant-gaming.com/themes/igv2/images/banners/banner-ig-small.png" alt="Instant Gaming">
-</a>
+<div id="ig-banner-wrap">
+    <div id="my-instant-gaming-banner"></div>
+</div>
+
+<script>
+    window.igBannerConfig = {
+        lang: 'de',
+        igr: 'gamer-df4dd7a', 
+        banners: ['my-instant-gaming-banner']
+    };
+</script>
+<script src="https://www.instant-gaming.com/api/banner/partner/loader.js" defer></script>
 </body>
 </html>
