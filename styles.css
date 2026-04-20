@@ -133,3 +133,35 @@ h1 {
   opacity: 1;
   transform: translateY(0);
 }
+
+.ig-banner {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0.8; 
+}
+
+.ig-banner img {
+  width: 150px; 
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  display: block;
+}
+
+.ig-banner:hover {
+  transform: scale(1.05);
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .ig-banner {
+    bottom: 10px;
+    right: 10px;
+  }
+  .ig-banner img {
+    width: 120px;
+  }
+}
