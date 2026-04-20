@@ -138,18 +138,29 @@ h1 {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    width: 250px; /* Breite kannst du anpassen */
+    /* Hier steuerst du die Länge */
+    width: 450px; 
+    /* Falls der Bildschirm zu schmal ist, passt er sich an */
+    max-width: 90vw; 
+    
     z-index: 9999;
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    opacity: 0.9;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
 }
 
+/* Damit der Banner innerhalb des Containers nicht gestaucht wird */
+#my-instant-gaming-banner iframe, 
+#my-instant-gaming-banner img {
+    width: 100% !important;
+    height: auto !important;
+    display: block;
+}
+
+/* Hover-Effekt für den cleanen Look */
 #ig-banner-wrap:hover {
-    transform: translateY(-5px);
-    opacity: 1;
+    transform: scale(1.02);
 }
 
 /* Mobil-Optimierung: Banner etwas kleiner oder ausblenden, falls er stört */
