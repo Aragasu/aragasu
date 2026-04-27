@@ -65,6 +65,9 @@ window.addEventListener('load', () => {
   });
 });
 
+/* === Hilfsfunktion für "null" Check === */
+const clean = (str) => (str && str.trim().toLowerCase() === "null") ? "" : str.trim();
+
 /* === Data Fetching === */
 fetch('socials.txt').then(res => res.text()).then(text => {
     const container = document.getElementById('social-icons');
@@ -83,9 +86,13 @@ fetch('info.txt').then(res => res.text()).then(text => {
     const lines = text.split('\n');
     for (let i = 0; i < lines.length; i++) {
       if (!lines[i].trim()) continue;
-      const title = lines[i].trim();
-      const content = (lines[i + 1] || '').trim();
-      i++;
+      
+      const title = clean(lines[i]);
+      const content = clean(lines[i + 1] || '');
+      i++; 
+
+      if (!title) continue;
+
       const div = document.createElement('div');
       div.className = 'link-card';
       div.innerHTML = `<strong>${title}</strong>${(content && content !== '{0}') ? '<br><span>' + content + '</span>' : ''}`;
@@ -98,9 +105,13 @@ fetch('cards.txt').then(res => res.text()).then(text => {
     const lines = text.split('\n').map(l => l.trim());
     for (let i = 0; i < lines.length; i++) {
       if (!lines[i]) continue;
-      const title = lines[i]; i++;
-      const url = lines[i];   i++;
-      let desc = lines[i] || ''; i++;
+
+      const title = clean(lines[i]); i++;
+      const url = clean(lines[i]);   i++;
+      let desc = clean(lines[i] || ''); i++;
+
+      if (!title || !url) continue;
+
       const a = document.createElement('a');
       a.className = 'link-card';
       a.href = url;
@@ -120,4 +131,3 @@ fetch('cards.txt').then(res => res.text()).then(text => {
 <script src="https://www.instant-gaming.com/api/banner/partner/loader.js" defer></script>
 </body>
 </html>
-
