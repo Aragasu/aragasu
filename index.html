@@ -5,40 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>aragasu.xyz</title>
 
-  <!-- Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
 
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Favicon -->
-  <link rel="icon" href="/images/amc_transparent.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/amc_transparent.png">
+  <link rel="icon" href="images/amc_transparent.ico">
 </head>
 <body>
 
 <main class="container">
   <div class="content-wrapper">
 
-    <!-- Avatar -->
-    <div class="avatar fade-in">
-      <img src="\images\avatar.svg" alt="Avatar">
+    <div class="avatar-wrapper fade-in">
+      <div class="avatar">
+        <img src="images/avatar.svg" alt="Aragasu">
+      </div>
     </div>
 
-    <!-- Scrambled Name -->
-    <h1 id="scramble-text" class="fade-in">Aragasu</h1>
+    <h1 id="scramble-text" class="fade-in">aragasu</h1>
+    <p class="pronouns fade-in">he/him</p>
 
-    <!-- Social Icons -->
     <div class="social-icons fade-in" id="social-icons"></div>
-
-    <!-- Info Boxes -->
     <div class="info-list fade-in" id="info-list"></div>
-
-    <!-- Link Cards -->
     <div class="link-list fade-in" id="link-list"></div>
 
   </div>
@@ -47,8 +38,8 @@
 <script>
 /* === Scramble Name === */
 const titleEl = document.getElementById('scramble-text');
-const chars = 'abcdefghijklmnopqrstuvwxyz#?!=()';
-const text = 'Aragasu';
+const chars = '✿♡*+:.•'; 
+const text = 'aragasu';
 let frame = 0;
 const totalFrames = 30;
 
@@ -67,97 +58,66 @@ function scramble() {
 }
 scramble();
 
-/* === Fade-in === */
+/* === Staggered Fade-in === */
 window.addEventListener('load', () => {
-  document.querySelectorAll('.fade-in').forEach(el =>
-    el.classList.add('visible')
-  );
+  document.querySelectorAll('.fade-in').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), i * 150);
+  });
 });
 
-/* === Load socials from socials.txt === */
-fetch('socials.txt')
-  .then(res => res.text())
-  .then(text => {
+/* === Data Fetching === */
+fetch('socials.txt').then(res => res.text()).then(text => {
     const container = document.getElementById('social-icons');
     const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-
     for (let i = 0; i < lines.length; i += 3) {
-      const name = lines[i];
-      const link = lines[i + 1];
-      const icon = lines[i + 2];
-
-      if (!name || !link || !icon) continue;
-
       const a = document.createElement('a');
-      a.href = link;
-      a.title = name;
-      a.target = link.startsWith('http') ? '_blank' : '_self';
-      a.innerHTML = `<i class="${icon}"></i>`;
-
+      a.href = lines[i + 1];
+      a.target = '_blank';
+      a.innerHTML = `<i class="${lines[i + 2]}"></i>`;
       container.appendChild(a);
     }
-  })
-  .catch(err => console.error('Failed to load socials.txt', err));
+});
 
-/* === Load info boxes from info.txt (Title + Text) === */
-fetch('info.txt')
-  .then(res => res.text())
-  .then(text => {
+fetch('info.txt').then(res => res.text()).then(text => {
     const container = document.getElementById('info-list');
     const lines = text.split('\n');
-
     for (let i = 0; i < lines.length; i++) {
-      if (!lines[i].trim()) continue; // Leerzeile = Trennung
+      if (!lines[i].trim()) continue;
       const title = lines[i].trim();
       const content = (lines[i + 1] || '').trim();
-      i++; // springe über Textzeile
-
+      i++;
       const div = document.createElement('div');
-      div.className = 'link-card'; // gleicher Stil wie Link-Cards
+      div.className = 'link-card';
       div.innerHTML = `<strong>${title}</strong>${(content && content !== '{0}') ? '<br><span>' + content + '</span>' : ''}`;
       container.appendChild(div);
     }
-  })
-  .catch(err => console.error('Failed to load info.txt', err));
+});
 
-/* === Load link cards from cards.txt (NO icons) === */
-fetch('cards.txt')
-  .then(res => res.text())
-  .then(text => {
+fetch('cards.txt').then(res => res.text()).then(text => {
     const container = document.getElementById('link-list');
     const lines = text.split('\n').map(l => l.trim());
-
     for (let i = 0; i < lines.length; i++) {
-      if (!lines[i]) continue; // Leerzeile = Trennung
-
+      if (!lines[i]) continue;
       const title = lines[i]; i++;
       const url = lines[i];   i++;
       let desc = lines[i] || ''; i++;
-
-      if (desc === '{0}') desc = '';
-      if (!title || !url) continue;
-
       const a = document.createElement('a');
       a.className = 'link-card';
       a.href = url;
-      a.target = url.startsWith('http') ? '_blank' : '_self';
-      a.innerHTML = `<strong>${title}</strong>${desc ? '<br><span>' + desc + '</span>' : ''}`;
-
+      a.target = '_blank';
+      a.innerHTML = `<strong>${title}</strong>${(desc && desc !== '{0}') ? '<br><span>' + desc + '</span>' : ''}`;
       container.appendChild(a);
     }
-  })
-  .catch(err => console.error('Failed to load cards.txt', err));</script>
+});
+</script>
+
 <div id="ig-banner-wrap">
     <div id="my-instant-gaming-banner"></div>
 </div>
-
 <script>
-    window.igBannerConfig = {
-        lang: 'en',
-        igr: 'aragasu', 
-        banners: ['my-instant-gaming-banner']
-    };
+    window.igBannerConfig = { lang: 'en', igr: 'aragasu', banners: ['my-instant-gaming-banner'] };
 </script>
 <script src="https://www.instant-gaming.com/api/banner/partner/loader.js" defer></script>
 </body>
 </html>
+
