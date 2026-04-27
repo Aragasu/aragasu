@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>404 – Not Found</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --bg: #0b0612;
@@ -14,11 +18,13 @@
       --muted: #b6a9c9;
       --blur: blur(18px);
       --radius: 22px;
+      /* Variable für die neue Schriftart */
+      --font-family: 'Outfit', system-ui, -apple-system, sans-serif;
     }
 
     * {
       box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: var(--font-family);
     }
 
     body {
@@ -44,9 +50,9 @@
     }
 
     .code {
-      font-size: 4rem;
+      font-size: 5rem; /* Etwas größer für Outfit-Look */
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: -0.01em; /* Outfit sieht mit engem Spacing besser aus */
       color: var(--accent);
       margin-bottom: 8px;
       text-shadow: 0 0 30px rgba(155,92,255,0.4);
@@ -54,13 +60,15 @@
 
     h1 {
       margin: 0 0 12px;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
+      font-weight: 600;
     }
 
     p {
       margin: 0 0 28px;
       color: var(--muted);
       line-height: 1.6;
+      font-size: 1.05rem;
     }
 
     .actions {
@@ -74,24 +82,29 @@
       padding: 14px 18px;
       border-radius: 999px;
       font-weight: 600;
-      transition: transform .15s ease, box-shadow .15s ease;
+      transition: all .2s ease;
       text-align: center;
     }
 
     .home {
       background: linear-gradient(135deg, #9b5cff, #6d28d9);
       color: white;
-      box-shadow: 0 10px 40px rgba(155,92,255,0.4);
+      box-shadow: 0 10px 40px rgba(155,92,255,0.3);
     }
 
     .home:hover {
       transform: translateY(-2px);
-      box-shadow: 0 14px 50px rgba(155,92,255,0.6);
+      box-shadow: 0 14px 50px rgba(155,92,255,0.5);
     }
 
     .back {
       background: rgba(255,255,255,0.08);
       color: var(--text);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .back:hover {
+      background: rgba(255,255,255,0.12);
     }
   </style>
 </head>
@@ -112,3 +125,4 @@
   </div>
 </body>
 </html>
+
