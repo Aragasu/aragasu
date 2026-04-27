@@ -30,7 +30,12 @@
 
     <div class="social-icons fade-in" id="social-icons"></div>
     <div class="info-list fade-in" id="info-list"></div>
-    <div class="link-list fade-in" id="link-list"></div>
+    
+    <div class="link-list fade-in" id="link-list">
+      <div id="ig-banner-wrap" class="link-card fade-in">
+          <div id="my-instant-gaming-banner"></div>
+      </div>
+    </div>
 
   </div>
 </main>
@@ -41,7 +46,7 @@ const titleEl = document.getElementById('scramble-text');
 const chars = 'xyz•●○♤♧◇$°•☆'; 
 const text = 'aragasu';
 let frame = 0;
-const totalFrames = 30;
+const totalFrames = 120;
 
 function scramble() {
   let output = '';
@@ -102,6 +107,7 @@ fetch('info.txt').then(res => res.text()).then(text => {
 
 fetch('cards.txt').then(res => res.text()).then(text => {
     const container = document.getElementById('link-list');
+    const igCard = document.getElementById('ig-banner-wrap');
     const lines = text.split('\n').map(l => l.trim());
     for (let i = 0; i < lines.length; i++) {
       if (!lines[i]) continue;
@@ -117,14 +123,12 @@ fetch('cards.txt').then(res => res.text()).then(text => {
       a.href = url;
       a.target = '_blank';
       a.innerHTML = `<strong>${title}</strong>${(desc && desc !== '{0}') ? '<br><span>' + desc + '</span>' : ''}`;
-      container.appendChild(a);
+      // Insert before the IG card to keep IG at the bottom
+      container.insertBefore(a, igCard);
     }
 });
 </script>
 
-<div id="ig-banner-wrap">
-    <div id="my-instant-gaming-banner"></div>
-</div>
 <script>
     window.igBannerConfig = { lang: 'en', igr: 'aragasu', banners: ['my-instant-gaming-banner'] };
 </script>
