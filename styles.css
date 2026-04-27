@@ -5,27 +5,23 @@
 }
 
 body {
-  font-family: 'Unbounded', sans-serif;
+  font-family: 'Outfit', sans-serif;
   min-height: 100vh;
   color: #fff;
   display: flex;
   justify-content: center;
-  background: linear-gradient(135deg, #050008, #120014, #1a001f);
+  background: #050008; 
+  overflow-x: hidden;
 }
 
+/* Background GIF from images folder */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background:
-    url('images/bg1.png') center / cover no-repeat;
-  opacity: 0.25;
+  background: url('images/banner.gif') center / cover no-repeat;
+  opacity: 0.45;
   z-index: -1;
-}
-
-.container {
-  width: 100%;
-  text-align: center;
 }
 
 .content-wrapper {
@@ -35,97 +31,112 @@ body::before {
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  padding: 2rem 1rem;
+  padding: 3rem 1rem;
 }
 
-/* === Avatar === */
+/* === Avatar Style === */
+.avatar-wrapper {
+  padding: 4px;
+  background: linear-gradient(45deg, #a044ff, #6a11cb);
+  border-radius: 50%;
+  box-shadow: 0 0 25px rgba(160, 68, 255, 0.4);
+  margin-bottom: 0.5rem;
+}
+
 .avatar {
-  width: 96px;
-  height: 96px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   overflow: hidden;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  border: 3px solid #050008;
+  background: #120014;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .avatar img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* Better for SVG logos */
 }
 
-/* === Title === */
+/* === Typography === */
 h1 {
-  font-size: clamp(2rem, 10vw, 4rem);
+  font-size: clamp(2.5rem, 10vw, 4rem);
   font-weight: 700;
+  letter-spacing: -1px;
+  text-transform: lowercase;
 }
 
-/* === Subtitle === */
-.subtitle {
-  font-size: 0.95rem;
-  opacity: 0.7;
+.pronouns {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: -8px;
 }
 
 /* === Social Icons === */
 .social-icons {
   display: flex;
-  gap: 1.3rem;
-  margin: 1.2rem 0 1.8rem;
+  gap: 1.5rem;
+  margin: 1rem 0;
 }
 
 .social-icons a {
-  font-size: 1.25rem;
-  color: white;
-  opacity: 0.75;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  font-size: 1.4rem;
+  color: #d199ff;
+  transition: all 0.3s ease;
 }
 
 .social-icons a:hover {
+  color: #fff;
   transform: translateY(-3px);
-  opacity: 1;
 }
 
-/* === Link Cards === */
-.link-list {
-  width: min(420px, 90vw);
+/* === Cards & Glassmorphism === */
+.link-list, .info-list {
+  width: min(420px, 92vw);
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
 .link-card {
-  padding: 1rem 1.3rem;
-  border-radius: 18px;
+  padding: 1.2rem 1.5rem;
+  border-radius: 22px;
   text-decoration: none;
   color: white;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(15, 5, 20, 0.65);
   backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  transition: transform 0.25s ease, background 0.25s ease;
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.link-card strong {
+  display: block;
+  font-size: 1.1rem;
+  color: #f3e8ff;
 }
 
 .link-card span {
-  font-size: 0.75rem;
-  opacity: 0.6;
+  font-size: 0.85rem;
+  opacity: 0.7;
 }
 
 .link-card:hover {
-  transform: translateY(-3px);
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(160, 68, 255, 0.12);
+  border-color: rgba(160, 68, 255, 0.4);
+  transform: translateY(-4px);
 }
 
-/* === Disclaimer === */
-.disclaimer {
-  position: fixed;
-  bottom: 1rem;
-  left: 1rem;
-  font-size: 0.55rem;
-  opacity: 0.25;
-}
-
-/* === Fade-in === */
+/* === Animations === */
 .fade-in {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(20px);
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
@@ -134,40 +145,20 @@ h1 {
   transform: translateY(0);
 }
 
+/* === Instant Gaming Banner === */
 #ig-banner-wrap {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    /* Hier steuerst du die Länge */
     width: 450px; 
-    /* Falls der Bildschirm zu schmal ist, passt er sich an */
     max-width: 90vw; 
-    
     z-index: 9999;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    transition: all 0.3s ease;
 }
 
-/* Damit der Banner innerhalb des Containers nicht gestaucht wird */
-#my-instant-gaming-banner iframe, 
-#my-instant-gaming-banner img {
-    width: 100% !important;
-    height: auto !important;
-    display: block;
-}
-
-/* Hover-Effekt für den cleanen Look */
-#ig-banner-wrap:hover {
-    transform: scale(1.02);
-}
-
-/* Mobil-Optimierung: Banner etwas kleiner oder ausblenden, falls er stört */
 @media (max-width: 600px) {
-    #ig-banner-wrap {
-        width: 150px;
-        bottom: 10px;
-        right: 10px;
-    }
-  }
+    #ig-banner-wrap { width: 180px; }
+}
+
