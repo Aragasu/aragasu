@@ -19,7 +19,7 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: url('images/banner.gif') center / cover no-repeat;
+  background: url('images/bg.gif') center / cover no-repeat;
   opacity: 0.45;
   z-index: -1;
 }
