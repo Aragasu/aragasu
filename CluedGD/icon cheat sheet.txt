@@ -1,0 +1,36 @@
+https://fontawesome.com/v4/icons/
+
+Social:
+
+fab fa-discord
+fab fa-youtube
+fab fa-github
+fab fa-twitter
+fab fa-x-twitter
+fab fa-instagram
+fab fa-twitch
+fab fa-tiktok
+fab fa-reddit
+fab fa-spotify
+fab fa-steam
+
+
+Utility:
+
+fas fa-envelope      (Email)
+fas fa-globe         (Website)
+fas fa-link          (Generic Link)
+fas fa-user          (Profile)
+fas fa-heart
+fas fa-star
+fas fa-fire
+fas fa-bolt
+
+
+Gaming/Tech:
+
+fab fa-steam
+fab fa-discord
+fas fa-gamepad
+fas fa-code
+fas fa-terminal
