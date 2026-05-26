@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>CluedGD</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+
+  <link rel="icon" href="images/avatar.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+</head>
+<body>
+
+<main class="container">
+  <div class="content-wrapper">
+
+    <div class="avatar-wrapper fade-in">
+      <div class="avatar">
+        <img src="images/avatar.png" alt="CluedGD">
+      </div>
+    </div>
+
+    <h1 id="scramble-text" class="fade-in">Clued</h1>
+
+    <div class="social-icons fade-in" id="social-icons"></div>
+    <div class="location fade-in" id="location"></div>
+    <div class="info-list fade-in" id="info-list"></div>
+    
+    <div class="link-list fade-in" id="link-list">
+    
+    </div>
+
+      <div class="credits fade-in">♤ Made by <a href="https://aragasu.xyz" target="_blank">Aragasu</a> ♤</div>
+
+  </div>
+</main>
+
+<script>
+/* === Background auto-detect === */
+const bgExts = ['gif', 'png', 'jpg', 'jpeg', 'webp', 'mp4'];
+(function tryBg(i) {
+  if (i >= bgExts.length) return;
+  const ext = bgExts[i];
+  if (ext === 'mp4') {
+    const v = document.createElement('video');
+    v.src = 'images/bg.mp4';
+    v.loop = true;
+    v.playsInline = true;
+    v.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.35;z-index:-1;pointer-events:none;';
+    v.disablePictureInPicture = true;
+    v.setAttribute('disablepictureinpicture', '');
+    document.body.prepend(v);
+    const s = document.createElement('style');
+    s.textContent = 'body::before { display: none; }';
+    document.head.appendChild(s);
+
+    // try autoplay with audio, fallback to muted
+    v.muted = false;
+    v.volume = 0.4;
+    v.play().catch(() => {
+      v.muted = true;
+      v.play();
+    });
+
+    // === Media Bar ===
+    const bar = document.createElement('div');
+    bar.id = 'media-bar';
+    bar.innerHTML = `
+      <button id="mb-playpause" title="Play/Pause">
+        <i class="fas fa-pause"></i>
+      </button>
+      <div id="mb-controls">
+        <i class="fas fa-volume-up"></i>
+        <input id="mb-volume" type="range" min="0" max="1" step="0.01" value="0.4">
+      </div>
+    `;
+    document.body.appendChild(bar);
+
+    const btn = document.getElementById('mb-playpause');
+    const volSlider = document.getElementById('mb-volume');
+
+    btn.addEventListener('click', () => {
+      if (v.paused) { v.play(); btn.innerHTML = '<i class="fas fa-pause"></i>'; }
+      else { v.pause(); btn.innerHTML = '<i class="fas fa-play"></i>'; }
+    });
+
+    volSlider.addEventListener('input', () => {
+      v.volume = volSlider.value;
+      v.muted = volSlider.value == 0;
+    });
+
+    // update icon if browser force-muted
+    v.addEventListener('volumechange', () => {
+      if (!document.getElementById('mb-volume')) return;
+      document.getElementById('mb-volume').value = v.muted ? 0 : v.volume;
+    });
+  } else {
+    const img = new Image();
+    img.src = `images/bg.${ext}`;
+    img.onload = () => {
+      document.documentElement.style.setProperty('--bg-url', `url('images/bg.${ext}')`);
+      const s = document.createElement('style');
+      s.textContent = `body::before { background-image: var(--bg-url) !important; }`;
+      document.head.appendChild(s);
+    };
+    img.onerror = () => tryBg(i + 1);
+  }
+})(0);
+
+/* === Scramble Name === */
+const titleEl = document.getElementById('scramble-text');
+const chars = 'xyz●♤♧'; 
+const text = 'Clued';
+let frame = 0;
+const totalFrames = 80;
+
+function scramble() {
+  let output = '';
+  for (let i = 0; i < text.length; i++) {
+    output += Math.random() < frame / totalFrames
+      ? text[i]
+      : chars[Math.floor(Math.random() * chars.length)];
+  }
+  titleEl.textContent = output;
+  frame++;
+  if (frame <= totalFrames) {
+    requestAnimationFrame(scramble);
+  }
+}
+scramble();
+
+/* === Staggered Fade-in === */
+window.addEventListener('load', () => {
+  document.querySelectorAll('.fade-in').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), i * 150);
+  });
+});
+
+/* === Hilfsfunktion für "null" Check === */
+const clean = (str) => (str && str.trim().toLowerCase() === "null") ? "" : str.trim();
+
+/* === Data Fetching === */
+fetch('socials.txt').then(res => res.text()).then(text => {
+    const container = document.getElementById('social-icons');
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    for (let i = 0; i < lines.length; i += 3) {
+      const a = document.createElement('a');
+      a.href = lines[i + 1];
+      a.target = '_blank';
+      a.innerHTML = `<i class="${lines[i + 2]}"></i>`;
+      container.appendChild(a);
+    }
+});
+
+fetch('info.txt').then(res => res.text()).then(text => {
+    const container = document.getElementById('info-list');
+    const locContainer = document.getElementById('location');
+    const lines = text.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      if (!lines[i].trim()) continue;
+      
+      const title = clean(lines[i]);
+      const content = clean(lines[i + 1] || '');
+      i++; 
+
+      if (!title) continue;
+
+      if (title.startsWith('📍')) {
+        const span = document.createElement('span');
+        span.className = 'location-text';
+        span.innerHTML = `<svg class="loc-pin" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>${title.replace('📍', '').trim()}`;
+        locContainer.appendChild(span);
+      } else {
+        const div = document.createElement('div');
+        div.className = 'link-card';
+        div.innerHTML = `<strong>${title}</strong>${(content && content !== '{0}') ? '<br><span>' + content + '</span>' : ''}`;
+        container.appendChild(div);
+      }
+    }
+});
+
+fetch('cards.txt').then(res => res.text()).then(text => {
+    const container = document.getElementById('link-list');
+    const igCard = null;
+    const lines = text.split('\n').map(l => l.trim());
+    for (let i = 0; i < lines.length; i++) {
+      if (!lines[i]) continue;
+
+      const title = clean(lines[i]); i++;
+      const url = clean(lines[i]);   i++;
+      let desc = clean(lines[i] || ''); i++;
+
+      if (!title || !url) continue;
+
+      const a = document.createElement('a');
+      a.className = 'link-card';
+      a.href = url;
+      a.target = '_blank';
+      a.innerHTML = `<strong>${title}</strong>${(desc && desc !== '{0}') ? '<br><span>' + desc + '</span>' : ''}`;
+      // Insert before the IG card to keep IG at the bottom
+      container.appendChild(a);
+    }
+});
+</script>
+
+</body>
+</html>
