@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nothing</title>
+    <style>
+        /* Minimalistisches, graues Design */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #2b2b2b; /* Schönes, mattes Grau */
+            color: #ffffff; /* Weiße Schrift */
+            font-family: 'Courier New', Courier, monospace; /* Monospace für den Retro-Vibe */
+            user-select: none; /* Verhindert Textmarkierung beim Klicken */
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        #timer {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 id="message">you've done nothing for <span id="timer">0s</span></h1>
+    </div>
+
+    <script>
+        let seconds = 0;
+        let timerId = null;
+        const timerElement = document.getElementById('timer');
+
+        // Formatiert die Zeit in Sekunden, Minuten oder Stunden
+        function formatTime(totalSeconds) {
+            if (totalSeconds < 60) {
+                return `${totalSeconds}s`;
+            }
+            
+            const minutes = Math.floor(totalSeconds / 60);
+            const remainingSeconds = totalSeconds % 60;
+            
+            if (minutes < 60) {
+                return `${minutes}m ${remainingSeconds}s`;
+            }
+            
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+            return `${hours}h ${remainingMinutes}m ${remainingSeconds}s`;
+        }
+
+        // Startet den Timer
+        function startTimer() {
+            if (!timerId) {
+                timerId = setInterval(() => {
+                    seconds++;
+                    timerElement.textContent = formatTime(seconds);
+                }, 1000);
+            }
+        }
+
+        // Setzt alles eiskalt zurück
+        function resetTimer() {
+            if (seconds > 0) { // Nur resetten, wenn sich überhaupt was getan hat
+                seconds = 0;
+                timerElement.textContent = "0s";
+            }
+        }
+
+        // Event-Listener für absolut JEDE Aktion
+        
+        // 1. Tastatur
+        window.addEventListener('keydown', resetTimer);
+        
+        // 2. Mausbewegungen und Klicks
+        window.addEventListener('mousemove', resetTimer);
+        window.addEventListener('mousedown', resetTimer);
+        window.addEventListener('wheel', resetTimer); // Scrollen
+        
+        // 3. Touch-Events für Smartphones/Tablets
+        window.addEventListener('touchstart', resetTimer);
+        window.addEventListener('touchmove', resetTimer);
+
+        // Das Spiel startet, sobald die Seite geladen ist
+        startTimer();
+    </script>
+</body>
+</html>
