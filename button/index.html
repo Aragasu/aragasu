@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Trigger</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            /* Tiefschwarzer/dunkelgrauer Hintergrund */
+            background-color: #090909; 
+            color: #ccc;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none; /* Verhindert Textauswahl */
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px; /* Abstand zwischen Button und Text */
+        }
+
+        /* Der sleek, textless red glow button */
+        .trigger-btn {
+            background-color: #aa0000;
+            color: transparent;
+            border: none;
+            width: 100px;  /* Kleiner, konzentrierter Button */
+            height: 100px;
+            border-radius: 50%; /* Kreisförmig */
+            cursor: pointer;
+            outline: none;
+            transition: all 0.1s ease;
+            position: relative;
+            
+            /* Der intensive, moderne Glow-Effekt */
+            box-shadow: 
+                0 0 15px #ff0000, 
+                0 0 30px #aa0000, 
+                inset 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Hover-Effekt für zusätzliche Intensität */
+        .trigger-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 0 25px #ff0000, 
+                0 0 50px #aa0000, 
+                inset 0 0 15px rgba(255, 255, 255, 0.4);
+        }
+
+        /* Klick-Effekt für kurzes Schrumpfen */
+        .trigger-btn:active {
+            transform: scale(0.95);
+            box-shadow: 
+                0 0 10px #ff0000, 
+                0 0 20px #aa0000;
+        }
+
+        /* Status-Textbereich unter dem Button */
+        .status-message {
+            font-size: 0.8rem;
+            color: #666; /* Faint gray initially */
+            max-width: 300px;
+            line-height: 1.4;
+            transition: color 0.3s ease;
+        }
+
+        /* Risk Mode Toggle ganz klein unten rechts */
+        .risk-mode-container {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem; /* Sehr klein */
+            color: #444; /* Dezente Farbe */
+        }
+
+        .risk-mode-container label {
+            cursor: pointer;
+        }
+
+        .risk-mode-container input {
+            cursor: pointer;
+            width: 12px;
+            height: 12px;
+            accent-color: #aa0000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Der reine visuelle Button -->
+        <button class="trigger-btn" id="quantumButton"></button>
+        
+        <!-- Der dynamische Warntext -->
+        <p class="status-message" id="status-log">Initializing session...</p>
+    </div>
+
+    <!-- Risk Mode Toggle -->
+    <div class="risk-mode-container">
+        <label for="risk-mode-checkbox">Risk Mode</label>
+        <input type="checkbox" id="risk-mode-checkbox">
+    </div>
+
+    <script>
+        const quantumButton = document.getElementById('quantumButton');
+        const riskModeCheckbox = document.getElementById('risk-mode-checkbox');
+        const statusLog = document.getElementById('status-log');
+
+        // Funktion zum Aktualisieren der Warnmeldung basierend auf dem Modus
+        function updateStatusMessage() {
+            if (riskModeCheckbox.checked) {
+                statusLog.textContent = "WARNING: 50/50 chance you will be redirected to the homepage.";
+                statusLog.style.color = '#aa0000'; // Deep red for risk
+            } else {
+                statusLog.textContent = "50/50 chance your browser crashes.";
+                statusLog.style.color = '#666'; // Faint gray for normal
+            }
+        }
+
+        // Initialen Status setzen
+        updateStatusMessage();
+
+        // Event Listener für den Toggle
+        riskModeCheckbox.addEventListener('change', updateStatusMessage);
+
+        // Event Listener für den Button-Klick
+        quantumButton.addEventListener('click', pullTrigger);
+
+        function pullTrigger() {
+            const isRiskMode = riskModeCheckbox.checked;
+
+
+            // 50/50 Chance nach einer winzigen Verzögerung berechnen (für den Effekt)
+            setTimeout(() => {
+                if (Math.random() < 0.5) {
+                    // VERLOREN
+                    if (isRiskMode) {
+                        // Risk Mode: REDIRECT
+                        window.location.href = "https://aragasu.xyz"; // PLATZHALTER URL
+                    } else {
+                        // Normal Mode: CPU Infinite Loop friert den Tab ein
+                        statusLog.textContent = "Good Luck.";
+                        statusLog.style.color = '#ff0000';
+                        while (true) {
+                            // Tab stürzt ab
+                        }
+                    }
+                } else {
+                    // GEWONNEN - Der Button macht nichts, aber wir geben Feedback
+                    statusLog.textContent = "You got lucky...";
+                    statusLog.style.color = '#00ff88'; // Feedback green
+
+                    // Nach 1.5 Sekunden die Basis-Warnmeldung wieder anzeigen
+                    setTimeout(updateStatusMessage, 1500);
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>
