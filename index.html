@@ -11,14 +11,48 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="images/avatar.svg">
 </head>
-<body>
+<body data-theme="default">
 
 <div id="live-clock"></div>
 <canvas id="confetti-canvas"></canvas>
 
+<!-- ══ PAGES DRAWER (right) ══ -->
+<button class="drawer-toggle right-toggle" id="pages-toggle" aria-label="Open pages menu">
+  <span></span><span></span><span></span>
+</button>
+<div class="drawer-overlay" id="pages-overlay"></div>
+<aside class="drawer drawer-right" id="pages-drawer">
+  <div class="drawer-header">
+    <span>pages</span>
+    <button class="drawer-close" id="pages-close">✕</button>
+  </div>
+  <div class="drawer-content" id="pages-list"></div>
+</aside>
+
+<!-- ══ THEME DRAWER (left) ══ -->
+<button class="drawer-toggle left-toggle" id="theme-toggle" aria-label="Open theme menu">
+  <i class="fa-solid fa-palette"></i>
+</button>
+<aside class="drawer drawer-left" id="theme-drawer">
+  <div class="drawer-header">
+    <span>theme</span>
+    <button class="drawer-close" id="theme-close">✕</button>
+  </div>
+  <div class="drawer-content">
+    <p class="theme-coming-soon">more themes coming soon...</p>
+    <div class="theme-options" id="theme-options">
+      <button class="theme-btn active" data-theme="default">
+        <span class="theme-preview" style="background: linear-gradient(135deg,#a044ff,#050008)"></span>
+        <span>default</span>
+      </button>
+    </div>
+  </div>
+</aside>
+
 <main class="container">
   <div class="content-wrapper">
 
+    <!-- Avatar -->
     <div class="avatar-wrapper fade-in" id="avatar-wrapper">
       <div class="avatar">
         <img src="images/avatar.svg" alt="Aragasu" id="avatar-img">
@@ -30,70 +64,77 @@
 
     <div class="social-icons fade-in" id="social-icons"></div>
 
-    <!-- Discord Profile Card -->
-    <a class="dc-card fade-in" id="dc-card" href="https://discord.com/users/873234979239383040" target="_blank" style="display:none;">
+    <!-- ══ DISCORD PROFILE CARD ══ -->
+    <a class="dc-card fade-in" id="dc-card" href="https://discord.com/users/873234979239383040" target="_blank" style="display:none; opacity:0; transform:translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease;">
 
       <!-- Banner -->
       <div class="dc-banner" id="dc-banner">
         <div class="dc-banner-overlay"></div>
       </div>
 
-      <!-- Body -->
-      <div class="dc-body">
-
-        <!-- Avatar + Status dot -->
+      <!-- Avatar row -->
+      <div class="dc-avatar-row">
         <div class="dc-avatar-wrap">
           <img class="dc-avatar" id="dc-avatar" src="" alt="">
           <img class="dc-decoration" id="dc-decoration" src="" alt="" style="display:none;">
           <span class="dc-status-dot" id="dc-status-dot"></span>
         </div>
+        <!-- Badges float top-right -->
+        <div class="dc-badges" id="dc-badges"></div>
+      </div>
 
-        <!-- Right side info -->
-        <div class="dc-info">
+      <!-- Profile body -->
+      <div class="dc-profile-body">
 
-          <!-- Row 1: display name + server tag + badges -->
-          <div class="dc-top-row">
-            <div class="dc-names-cluster">
-              <span class="dc-displayname" id="dc-displayname"></span>
-              <!-- Server tag (clan) -->
-              <span class="dc-server-tag" id="dc-server-tag" style="display:none;">
-                <img class="dc-server-tag-badge" id="dc-server-tag-badge" src="" alt="" style="display:none;">
-                <span id="dc-server-tag-text"></span>
-              </span>
+        <!-- Name + tag -->
+        <div class="dc-name-row">
+          <span class="dc-displayname" id="dc-displayname"></span>
+          <span class="dc-server-tag" id="dc-server-tag" style="display:none;">
+            <img class="dc-server-tag-badge" id="dc-server-tag-badge" src="" alt="" style="display:none;">
+            <span id="dc-server-tag-text"></span>
+          </span>
+        </div>
+
+        <!-- Username -->
+        <span class="dc-username" id="dc-username"></span>
+
+        <!-- Divider -->
+        <div class="dc-divider"></div>
+
+        <!-- About / status area — we use for activity -->
+        <div class="dc-section" id="dc-activity-section" style="display:none;">
+          <div class="dc-section-label" id="dc-activity-label">PLAYING A GAME</div>
+          <div class="dc-activity-inner">
+            <img class="dc-activity-icon" id="dc-activity-icon" src="" alt="" style="display:none;">
+            <div class="dc-activity-details">
+              <span class="dc-activity-name" id="dc-activity-name"></span>
+              <span class="dc-activity-sub"  id="dc-activity-sub"></span>
             </div>
-            <div class="dc-badges" id="dc-badges"></div>
           </div>
+        </div>
 
-          <!-- Row 2: username -->
-          <span class="dc-username" id="dc-username"></span>
-
-          <!-- Row 3: activity -->
-          <div class="dc-activity-wrap" id="dc-activity-wrap" style="display:none;">
-            <span class="dc-activity-label" id="dc-activity-label"></span>
-            <div class="dc-activity-inner" id="dc-activity-inner">
-              <img class="dc-activity-icon" id="dc-activity-icon" src="" alt="" style="display:none;">
-              <span class="dc-activity-text" id="dc-activity-text"></span>
-            </div>
-          </div>
-
-          <!-- Spotify block -->
-          <div class="dc-spotify" id="dc-spotify" style="display:none;">
+        <!-- Spotify -->
+        <div class="dc-section dc-spotify" id="dc-spotify" style="display:none;">
+          <div class="dc-section-label">LISTENING TO SPOTIFY</div>
+          <div class="dc-spotify-inner">
             <img class="dc-spotify-art" id="dc-spotify-art" src="" alt="">
             <div class="dc-spotify-details">
-              <span class="sp-song" id="sp-song"></span>
+              <span class="sp-song"   id="sp-song"></span>
               <span class="sp-artist" id="sp-artist"></span>
               <div class="dc-spotify-bar-wrap">
                 <div class="dc-spotify-bar" id="dc-spotify-bar"></div>
               </div>
             </div>
           </div>
-
         </div>
+
       </div>
     </a>
 
+    <!-- Normal cards -->
     <div class="info-list fade-in" id="info-list"></div>
 
+    <!-- IG banner + link cards -->
     <div class="link-list fade-in" id="link-list">
       <div id="ig-banner-wrap" class="link-card fade-in">
         <div id="my-instant-gaming-banner"></div>
@@ -105,34 +146,31 @@
 
 <script>
 /* ── Scramble ── */
-const titleEl = document.getElementById('scramble-text');
-const chars = 'xyz●♤♧';
-const text = 'aragasu';
-let frame = 0;
-const totalFrames = 80;
-function scramble() {
-  let out = '';
-  for (let i = 0; i < text.length; i++)
-    out += Math.random() < frame / totalFrames ? text[i] : chars[Math.floor(Math.random() * chars.length)];
-  titleEl.textContent = out;
-  frame++;
-  if (frame <= totalFrames) requestAnimationFrame(scramble);
+const titleEl=document.getElementById('scramble-text');
+const chars='xyz●♤♧', scrambleText='aragasu';
+let frame=0;
+function scramble(){
+  let out='';
+  for(let i=0;i<scrambleText.length;i++)
+    out+=Math.random()<frame/80?scrambleText[i]:chars[Math.floor(Math.random()*chars.length)];
+  titleEl.textContent=out; frame++;
+  if(frame<=80) requestAnimationFrame(scramble);
 }
 scramble();
 
 /* ── Fade-in ── */
-window.addEventListener('load', () => {
-  document.querySelectorAll('.fade-in').forEach((el, i) =>
-    setTimeout(() => el.classList.add('visible'), i * 150));
+window.addEventListener('load',()=>{
+  document.querySelectorAll('.fade-in').forEach((el,i)=>
+    setTimeout(()=>el.classList.add('visible'),i*150));
 });
 
 /* ── Helpers ── */
-const clean = s => (s && s.trim().toLowerCase() === 'null') ? '' : s.trim();
-const esc   = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const clean=s=>(s&&s.trim().toLowerCase()==='null')?'':s.trim();
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
 /* ── Data files ── */
 fetch('socials.txt').then(r=>r.text()).then(t=>{
-  const c=document.getElementById('social-icons'), lines=t.split('\n').map(l=>l.trim()).filter(Boolean);
+  const c=document.getElementById('social-icons'),lines=t.split('\n').map(l=>l.trim()).filter(Boolean);
   for(let i=0;i<lines.length;i+=3){const a=document.createElement('a');a.href=lines[i+1];a.target='_blank';a.innerHTML=`<i class="${lines[i+2]}"></i>`;c.appendChild(a);}
 });
 fetch('info.txt').then(r=>r.text()).then(t=>{
@@ -144,281 +182,251 @@ fetch('cards.txt').then(r=>r.text()).then(t=>{
   for(let i=0;i<lines.length;i++){if(!lines[i])continue;const title=clean(lines[i]);i++;const url=clean(lines[i]);i++;const desc=clean(lines[i]||'');i++;if(!title||!url)continue;const a=document.createElement('a');a.className='link-card';a.href=url;a.target='_blank';a.innerHTML=`<strong>${title}</strong>${(desc&&desc!=='{0}')?'<br><span>'+desc+'</span>':''}`;c.insertBefore(a,ig);}
 });
 
+/* ── Pages drawer ── */
+fetch('pages.txt').then(r=>r.text()).then(t=>{
+  const c=document.getElementById('pages-list'),lines=t.split('\n').map(l=>l.trim());
+  let any=false;
+  for(let i=0;i<lines.length;i++){
+    if(!lines[i])continue;
+    const name=clean(lines[i]);i++;
+    const url=clean(lines[i]||'');i++;
+    const desc=clean(lines[i]||'');i++;
+    if(!name||!url)continue;
+    any=true;
+    const a=document.createElement('a');
+    a.className='drawer-link';a.href=url;a.target='_blank';
+    a.innerHTML=`<span class="dl-name">${esc(name)}</span>${desc?`<span class="dl-desc">${esc(desc)}</span>`:''}`;
+    c.appendChild(a);
+  }
+  if(!any){const p=document.createElement('p');p.className='drawer-empty';p.textContent='no pages yet';c.appendChild(p);}
+}).catch(()=>{});
+
+/* ── Drawer logic (shared) ── */
+function initDrawer(toggleId, drawerId, overlayId, closeId){
+  const toggle=document.getElementById(toggleId);
+  const drawer=document.getElementById(drawerId);
+  const overlay=document.getElementById(overlayId||'_none');
+  const close=document.getElementById(closeId);
+  function open(){drawer.classList.add('open');if(overlay)overlay.classList.add('active');}
+  function shut(){drawer.classList.remove('open');if(overlay)overlay.classList.remove('active');}
+  toggle?.addEventListener('click',()=>drawer.classList.contains('open')?shut():open());
+  close?.addEventListener('click',shut);
+  overlay?.addEventListener('click',shut);
+}
+initDrawer('pages-toggle','pages-drawer','pages-overlay','pages-close');
+initDrawer('theme-toggle','theme-drawer',null,'theme-close');
+
+/* ── Theme switcher ── */
+document.querySelectorAll('.theme-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.body.setAttribute('data-theme',btn.dataset.theme);
+    document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    localStorage.setItem('theme',btn.dataset.theme);
+  });
+});
+const savedTheme=localStorage.getItem('theme');
+if(savedTheme){
+  document.body.setAttribute('data-theme',savedTheme);
+  document.querySelectorAll('.theme-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.theme===savedTheme);
+  });
+}
+
 /* ── Live Clock ── */
 function updateClock(){document.getElementById('live-clock').textContent=new Date().toLocaleTimeString('de-DE',{timeZone:'Europe/Berlin',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
-updateClock(); setInterval(updateClock,1000);
+updateClock();setInterval(updateClock,1000);
 
-/* ── Avatar Easter Egg — smooth spin ── */
-let clickCount=0, clickTimer=null;
-const avatarWrapper=document.getElementById('avatar-wrapper');
-const avatarImg=document.getElementById('avatar-img');
-avatarWrapper.addEventListener('click',()=>{
-  clickCount++;
-  clearTimeout(clickTimer);
-  clickTimer=setTimeout(()=>{clickCount=0;},1500);
+/* ── Avatar Easter Egg ── */
+let clickCount=0,clickTimer=null;
+document.getElementById('avatar-wrapper').addEventListener('click',()=>{
+  clickCount++;clearTimeout(clickTimer);
+  clickTimer=setTimeout(()=>clickCount=0,1500);
   if(clickCount>=7){clickCount=0;triggerEasterEgg();}
 });
-
 function triggerEasterEgg(){
-  // Smooth CSS spin via Web Animations API
-  avatarImg.animate(
-    [{transform:'rotate(0deg) scale(1)'},{transform:'rotate(180deg) scale(1.12)'},{transform:'rotate(360deg) scale(1)'}],
-    {duration:900, easing:'cubic-bezier(0.25,0.46,0.45,0.94)', fill:'forwards'}
-  ).onfinish = () => avatarImg.style.transform = '';
-
-  const canvas=document.getElementById('confetti-canvas');
-  const ctx=canvas.getContext('2d');
-  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
-  canvas.style.display='block';
+  const img=document.getElementById('avatar-img');
+  img.animate([{transform:'rotate(0deg) scale(1)'},{transform:'rotate(180deg) scale(1.1)'},{transform:'rotate(360deg) scale(1)'}],
+    {duration:900,easing:'cubic-bezier(0.25,0.46,0.45,0.94)',fill:'forwards'}).onfinish=()=>img.style.transform='';
+  const canvas=document.getElementById('confetti-canvas'),ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;canvas.style.display='block';
   const pieces=Array.from({length:140},()=>({
-    x:canvas.width/2, y:canvas.height*0.22,
-    vx:(Math.random()-0.5)*16, vy:Math.random()*-12-3,
-    w:Math.random()*8+3, h:Math.random()*4+2,
-    color:['#a044ff','#c68efa','#e040fb','#7c5cfc','#ffffff','#f3e8ff','#d4aaff'][Math.floor(Math.random()*7)],
-    alpha:1, gravity:0.38, rot:Math.random()*360, rotSpeed:(Math.random()-0.5)*10
+    x:canvas.width/2,y:canvas.height*0.22,vx:(Math.random()-.5)*16,vy:Math.random()*-12-3,
+    w:Math.random()*8+3,h:Math.random()*4+2,
+    color:['#a044ff','#c68efa','#e040fb','#7c5cfc','#fff','#f3e8ff','#d4aaff'][Math.floor(Math.random()*7)],
+    alpha:1,gravity:.38,rot:Math.random()*360,rotSpeed:(Math.random()-.5)*10
   }));
   let af;
-  function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    let alive=false;
-    for(const p of pieces){
-      p.vy+=p.gravity; p.x+=p.vx; p.y+=p.vy;
-      p.rot+=p.rotSpeed; p.alpha-=0.013;
-      if(p.alpha>0){
-        alive=true; ctx.save(); ctx.globalAlpha=p.alpha; ctx.fillStyle=p.color;
-        ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
-        ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
-      }
-    }
-    alive ? af=requestAnimationFrame(draw) : (canvas.style.display='none', ctx.clearRect(0,0,canvas.width,canvas.height));
-  }
-  cancelAnimationFrame(af); draw();
+  (function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);let alive=false;
+    for(const p of pieces){p.vy+=p.gravity;p.x+=p.vx;p.y+=p.vy;p.rot+=p.rotSpeed;p.alpha-=.013;
+      if(p.alpha>0){alive=true;ctx.save();ctx.globalAlpha=p.alpha;ctx.fillStyle=p.color;ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();}}
+    alive?af=requestAnimationFrame(draw):(canvas.style.display='none',ctx.clearRect(0,0,canvas.width,canvas.height));
+  })();
 }
 
-/* ═══════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════
    DISCORD CARD — Lanyard WebSocket
-   ═══════════════════════════════════════════════════════════ */
-const DISCORD_ID = '873234979239383040';
-const CDN = 'https://cdn.discordapp.com';
+   ══════════════════════════════════════════ */
+const DISCORD_ID='873234979239383040';
+const CDN='https://cdn.discordapp.com';
+const STATUS_COLOR={online:'#3ba55d',idle:'#faa61a',dnd:'#ed4245',offline:'#747f8d'};
+const STATUS_LABEL={online:'Online',idle:'Idle',dnd:'Do Not Disturb',offline:'Offline'};
+const ACTIVITY_VERB={0:'PLAYING A GAME',1:'LIVE ON TWITCH',2:'LISTENING TO SPOTIFY',3:'WATCHING',5:'COMPETING IN'};
 
-const STATUS_COLOR = { online:'#3ba55d', idle:'#faa61a', dnd:'#ed4245', offline:'#747f8d' };
-const STATUS_LABEL = { online:'Online', idle:'Idle', dnd:'Do Not Disturb', offline:'Offline' };
-
-// public_flags → badge icon map  (Discord CDN badge SVGs via discord.com/assets)
-// Using the well-known static badge URLs from discord.com
-const FLAG_BADGES = [
-  { flag: 1<<0,      title: 'Discord Staff',             icon: 'https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/60e2f168eca40b5a8c1b8a1c_staff.svg' },
-  { flag: 1<<1,      title: 'Partnered Server Owner',    icon: 'https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/60e2f168eca40b5a8c1b8a1e_partner.svg' },
-  { flag: 1<<2,      title: 'HypeSquad Events',          icon: 'https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/60e2f168eca40b5a8c1b8a1f_hypesquad.svg' },
-  { flag: 1<<3,      title: 'Bug Hunter Lv1',            icon: 'https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/60e2f168eca40b5a8c1b8a1d_bughunter.svg' },
-  { flag: 1<<6,      title: 'HypeSquad Bravery',         icon: 'https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/60e2f168eca40b5a8c1b8a20_bravery.svg' },
-  { flag: 1<<7,      title: 'HypeSquad Brilliance',      icon: 'https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/60e2f168eca40b5a8c1b8a22_brilliance.svg' },
-  { flag: 1<<8,      title: 'HypeSquad Balance',         icon: 'https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/60e2f168eca40b5a8c1b8a21_balance.svg' },
-  { flag: 1<<9,      title: 'Early Supporter',           icon: 'https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/60e2f168eca40b5a8c1b8a23_earlysupporter.svg' },
-  { flag: 1<<14,     title: 'Bug Hunter Lv2',            icon: 'https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/60e2f168eca40b5a8c1b8a1d_bughunter.svg' },
-  { flag: 1<<17,     title: 'Early Verified Bot Dev',    icon: 'https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/60e2f168eca40b5a8c1b8a24_verifiedbotdev.svg' },
-  { flag: 1<<18,     title: 'Moderator Programs Alumni', icon: 'https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/60e2f168eca40b5a8c1b8a25_certifiedmod.svg' },
-  { flag: 1<<22,     title: 'Active Developer',          icon: 'https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/63507f3f62746e6f9a46ba05_active_developer_badge.svg' },
+const BADGE_CDN='https://cdn.discordapp.com/badge-icons/';
+const FLAGS_MAP=[
+  [1<<0, BADGE_CDN+'5e74e9b61934fc1f67c2da70d0aa1031.png','Discord Staff'],
+  [1<<1, BADGE_CDN+'3f9748e53446a137a052f3454e2de41e.png','Partnered Server Owner'],
+  [1<<2, BADGE_CDN+'bf01d1073931f921909045f3a39fd264.png','HypeSquad Events'],
+  [1<<3, BADGE_CDN+'2717692c7dca7289b35297368a940dd0.png','Bug Hunter'],
+  [1<<6, BADGE_CDN+'8a88d63823d8a71cd5e390baa45efa02.png','HypeSquad Bravery'],
+  [1<<7, BADGE_CDN+'011940fd013082d85d96680709bab45e.png','HypeSquad Brilliance'],
+  [1<<8, BADGE_CDN+'3aa41de486fa12454c3761e8e223442e.png','HypeSquad Balance'],
+  [1<<9, BADGE_CDN+'7060786766c9c840eb3019e725d2b358.png','Early Supporter'],
+  [1<<14,BADGE_CDN+'848f79194d4be5ff5f81505cbd0ce1e6.png','Bug Hunter Lv2'],
+  [1<<17,BADGE_CDN+'6df5892e0f35b051f8b61eace34f4967.png','Early Verified Bot Dev'],
+  [1<<18,BADGE_CDN+'fee1624003e2fee35cb398e125dc479b.png','Moderator Alumni'],
+  [1<<22,BADGE_CDN+'6bdc42827a38498929a4920da12695d9.png','Active Developer'],
 ];
 
-// Alternative: use discord.com direct asset URLs which are more reliable
-const BADGE_URLS = {
-  staff:            'https://cdn.discordapp.com/badge-icons/5e74e9b61934fc1f67c2da70d0aa1031.png',
-  partner:          'https://cdn.discordapp.com/badge-icons/3f9748e53446a137a052f3454e2de41e.png',
-  hypesquad:        'https://cdn.discordapp.com/badge-icons/bf01d1073931f921909045f3a39fd264.png',
-  bug_hunter_1:     'https://cdn.discordapp.com/badge-icons/2717692c7dca7289b35297368a940dd0.png',
-  bravery:          'https://cdn.discordapp.com/badge-icons/8a88d63823d8a71cd5e390baa45efa02.png',
-  brilliance:       'https://cdn.discordapp.com/badge-icons/011940fd013082d85d96680709bab45e.png',
-  balance:          'https://cdn.discordapp.com/badge-icons/3aa41de486fa12454c3761e8e223442e.png',
-  early_supporter:  'https://cdn.discordapp.com/badge-icons/7060786766c9c840eb3019e725d2b358.png',
-  bug_hunter_2:     'https://cdn.discordapp.com/badge-icons/848f79194d4be5ff5f81505cbd0ce1e6.png',
-  verified_dev:     'https://cdn.discordapp.com/badge-icons/6df5892e0f35b051f8b61eace34f4967.png',
-  moderator:        'https://cdn.discordapp.com/badge-icons/fee1624003e2fee35cb398e125dc479b.png',
-  active_dev:       'https://cdn.discordapp.com/badge-icons/6bdc42827a38498929a4920da12695d9.png',
-  nitro:            'https://cdn.discordapp.com/badge-icons/2ba85e8026a8614b640c2837bcdfe21b.png',
-  booster_1:        'https://cdn.discordapp.com/badge-icons/55ef3d79e5dc5b2f921b819fa3a37ddd.png',
-};
-
-const FLAGS_MAP = [
-  [1<<0,  BADGE_URLS.staff,          'Discord Staff'],
-  [1<<1,  BADGE_URLS.partner,        'Partnered Server Owner'],
-  [1<<2,  BADGE_URLS.hypesquad,      'HypeSquad Events'],
-  [1<<3,  BADGE_URLS.bug_hunter_1,   'Bug Hunter'],
-  [1<<6,  BADGE_URLS.bravery,        'HypeSquad Bravery'],
-  [1<<7,  BADGE_URLS.brilliance,     'HypeSquad Brilliance'],
-  [1<<8,  BADGE_URLS.balance,        'HypeSquad Balance'],
-  [1<<9,  BADGE_URLS.early_supporter,'Early Supporter'],
-  [1<<14, BADGE_URLS.bug_hunter_2,   'Bug Hunter Lv2'],
-  [1<<17, BADGE_URLS.verified_dev,   'Early Verified Bot Dev'],
-  [1<<18, BADGE_URLS.moderator,      'Moderator Alumni'],
-  [1<<22, BADGE_URLS.active_dev,     'Active Developer'],
-];
-
-const ACTIVITY_VERB = { 0:'Playing', 1:'Streaming', 2:'Listening to', 3:'Watching', 5:'Competing in' };
-
-let spotifyInterval = null;
-let spStart = 0, spEnd = 0;
-
-function updateSpotifyBar() {
-  const bar = document.getElementById('dc-spotify-bar');
-  if (!bar || !spEnd) return;
-  const pct = Math.min(100, ((Date.now() - spStart) / (spEnd - spStart)) * 100);
-  bar.style.width = pct + '%';
-  if (pct >= 100) clearInterval(spotifyInterval);
+let spInterval=null,spStart=0,spEnd=0;
+function updateSpBar(){
+  const bar=document.getElementById('dc-spotify-bar');
+  if(!bar||!spEnd)return;
+  const pct=Math.min(100,((Date.now()-spStart)/(spEnd-spStart))*100);
+  bar.style.width=pct+'%';
+  if(pct>=100)clearInterval(spInterval);
 }
 
-function renderCard(data) {
-  const u = data.discord_user;
-  const status = data.discord_status || 'offline';
-  const card = document.getElementById('dc-card');
+function renderCard(data){
+  const u=data.discord_user;
+  const status=data.discord_status||'offline';
+  const card=document.getElementById('dc-card');
 
   /* Banner */
-  const bannerEl = document.getElementById('dc-banner');
-  if (u.banner) {
-    const ext = u.banner.startsWith('a_') ? 'gif' : 'png';
-    bannerEl.style.backgroundImage = `url(${CDN}/banners/${u.id}/${u.banner}.${ext}?size=600)`;
-    bannerEl.style.backgroundColor = 'transparent';
+  const bannerEl=document.getElementById('dc-banner');
+  if(u.banner){
+    const ext=u.banner.startsWith('a_')?'gif':'png';
+    bannerEl.style.backgroundImage=`url(${CDN}/banners/${u.id}/${u.banner}.${ext}?size=600)`;
+    bannerEl.style.backgroundColor='transparent';
   } else {
-    bannerEl.style.backgroundImage = 'none';
-    bannerEl.style.backgroundColor = u.banner_color || '#1e1535';
+    bannerEl.style.backgroundImage='none';
+    bannerEl.style.backgroundColor=u.banner_color||'#1e1535';
   }
 
   /* Avatar */
-  const avatarEl = document.getElementById('dc-avatar');
-  if (u.avatar) {
-    const ext = u.avatar.startsWith('a_') ? 'gif' : 'png';
-    avatarEl.src = `${CDN}/avatars/${u.id}/${u.avatar}.${ext}?size=160`;
+  const avEl=document.getElementById('dc-avatar');
+  if(u.avatar){
+    const ext=u.avatar.startsWith('a_')?'gif':'png';
+    avEl.src=`${CDN}/avatars/${u.id}/${u.avatar}.${ext}?size=160`;
   } else {
-    const idx = Number((BigInt(u.id) >> 22n) % 6n);
-    avatarEl.src = `${CDN}/embed/avatars/${idx}.png`;
+    avEl.src=`${CDN}/embed/avatars/${Number(BigInt(u.id)>>22n)%6}.png`;
   }
 
-  /* Avatar decoration */
-  const decEl = document.getElementById('dc-decoration');
-  const dec = u.avatar_decoration_data;
-  if (dec?.asset) {
-    decEl.src = `${CDN}/avatar-decoration-presets/${dec.asset}.png?size=160&passthrough=true`;
-    decEl.style.display = 'block';
-  } else {
-    decEl.style.display = 'none';
-  }
+  /* Decoration */
+  const decEl=document.getElementById('dc-decoration');
+  if(u.avatar_decoration_data?.asset){
+    decEl.src=`${CDN}/avatar-decoration-presets/${u.avatar_decoration_data.asset}.png?size=160&passthrough=true`;
+    decEl.style.display='block';
+  } else decEl.style.display='none';
 
   /* Status dot */
-  const dot = document.getElementById('dc-status-dot');
-  dot.style.background = STATUS_COLOR[status];
-  dot.style.boxShadow = `0 0 0 3px #13101c, 0 0 6px ${STATUS_COLOR[status]}99`;
-  dot.title = STATUS_LABEL[status];
+  const dot=document.getElementById('dc-status-dot');
+  dot.style.background=STATUS_COLOR[status];
+  dot.style.boxShadow=`0 0 0 3px #1a1523, 0 0 6px ${STATUS_COLOR[status]}99`;
+  dot.title=STATUS_LABEL[status];
 
   /* Names */
-  document.getElementById('dc-displayname').textContent = u.global_name || u.username;
-  document.getElementById('dc-username').textContent = '@' + u.username;
+  document.getElementById('dc-displayname').textContent=u.global_name||u.username;
+  document.getElementById('dc-username').textContent='@'+u.username;
 
   /* Badges */
-  const badgeContainer = document.getElementById('dc-badges');
-  badgeContainer.innerHTML = '';
-  const flags = u.public_flags || 0;
-  for (const [flag, url, title] of FLAGS_MAP) {
-    if (flags & flag) {
-      const img = document.createElement('img');
-      img.src = url; img.alt = title; img.title = title;
-      img.className = 'dc-badge';
-      badgeContainer.appendChild(img);
-    }
+  const bc=document.getElementById('dc-badges');bc.innerHTML='';
+  if(u.avatar&&u.avatar.startsWith('a_')){
+    const img=document.createElement('img');
+    img.src=BADGE_CDN+'2ba85e8026a8614b640c2837bcdfe21b.png';img.alt='Nitro';img.title='Nitro';img.className='dc-badge';
+    bc.appendChild(img);
   }
-  // Nitro: animated avatar is a proxy
-  if (u.avatar && u.avatar.startsWith('a_')) {
-    const img = document.createElement('img');
-    img.src = BADGE_URLS.nitro; img.alt = 'Nitro'; img.title = 'Nitro';
-    img.className = 'dc-badge';
-    badgeContainer.prepend(img);
+  const flags=u.public_flags||0;
+  for(const[flag,url,title]of FLAGS_MAP){
+    if(flags&flag){const img=document.createElement('img');img.src=url;img.alt=title;img.title=title;img.className='dc-badge';bc.appendChild(img);}
   }
 
-  /* Server tag (clan / primary_guild) */
-  const tagEl   = document.getElementById('dc-server-tag');
-  const tagBadge= document.getElementById('dc-server-tag-badge');
-  const tagText = document.getElementById('dc-server-tag-text');
-  const pg = u.primary_guild;
-  if (pg && pg.identity_enabled && pg.tag) {
-    tagText.textContent = pg.tag;
-    if (pg.badge && pg.identity_guild_id) {
-      tagBadge.src = `${CDN}/clan-badges/${pg.identity_guild_id}/${pg.badge}.png?size=32`;
-      tagBadge.style.display = 'inline-block';
-    } else {
-      tagBadge.style.display = 'none';
-    }
-    tagEl.style.display = 'inline-flex';
-  } else {
-    tagEl.style.display = 'none';
-  }
+  /* Server tag */
+  const tagEl=document.getElementById('dc-server-tag');
+  const tagBadge=document.getElementById('dc-server-tag-badge');
+  const tagText=document.getElementById('dc-server-tag-text');
+  const pg=u.primary_guild;
+  if(pg?.identity_enabled&&pg.tag){
+    tagText.textContent=pg.tag;
+    if(pg.badge&&pg.identity_guild_id){
+      tagBadge.src=`${CDN}/clan-badges/${pg.identity_guild_id}/${pg.badge}.png?size=32`;
+      tagBadge.style.display='inline-block';
+    } else tagBadge.style.display='none';
+    tagEl.style.display='inline-flex';
+  } else tagEl.style.display='none';
 
   /* Activity / Spotify */
-  const spotifyEl    = document.getElementById('dc-spotify');
-  const actWrap      = document.getElementById('dc-activity-wrap');
-  const actLabel     = document.getElementById('dc-activity-label');
-  const actInner     = document.getElementById('dc-activity-inner');
-  const actIcon      = document.getElementById('dc-activity-icon');
-  const actText      = document.getElementById('dc-activity-text');
-  clearInterval(spotifyInterval);
+  const spotifyEl=document.getElementById('dc-spotify');
+  const actSection=document.getElementById('dc-activity-section');
+  clearInterval(spInterval);
 
-  if (data.listening_to_spotify && data.spotify) {
-    const sp = data.spotify;
-    spotifyEl.style.display = 'flex';
-    actWrap.style.display = 'none';
-    document.getElementById('dc-spotify-art').src = sp.album_art_url || '';
-    document.getElementById('sp-song').textContent   = sp.song;
-    document.getElementById('sp-artist').textContent = sp.artist;
-    spStart = sp.timestamps.start;
-    spEnd   = sp.timestamps.end;
-    updateSpotifyBar();
-    spotifyInterval = setInterval(updateSpotifyBar, 1000);
+  if(data.listening_to_spotify&&data.spotify){
+    const sp=data.spotify;
+    spotifyEl.style.display='block';
+    actSection.style.display='none';
+    document.getElementById('dc-spotify-art').src=sp.album_art_url||'';
+    document.getElementById('sp-song').textContent=sp.song;
+    document.getElementById('sp-artist').textContent=sp.artist;
+    spStart=sp.timestamps.start;spEnd=sp.timestamps.end;
+    updateSpBar();spInterval=setInterval(updateSpBar,1000);
   } else {
-    spotifyEl.style.display = 'none';
-    const act = data.activities?.find(a => a.type !== 4); // skip Custom Status
-    if (act) {
-      actWrap.style.display = 'flex';
-      actLabel.textContent = ACTIVITY_VERB[act.type] || 'Playing';
-
-      // Activity icon
-      if (act.assets?.large_image && act.application_id) {
-        const img = act.assets.large_image;
-        actIcon.src = img.startsWith('mp:external/')
-          ? 'https://media.discordapp.net/external/' + img.replace('mp:external/', '')
-          : `${CDN}/app-assets/${act.application_id}/${img}.png?size=64`;
-        actIcon.style.display = 'inline-block';
-      } else {
-        actIcon.style.display = 'none';
-      }
-
-      actText.textContent = act.name;
-      if (act.details) actText.textContent += ' — ' + act.details;
-    } else {
-      actWrap.style.display = 'none';
-    }
+    spotifyEl.style.display='none';
+    const act=data.activities?.find(a=>a.type!==4);
+    if(act){
+      actSection.style.display='block';
+      document.getElementById('dc-activity-label').textContent=ACTIVITY_VERB[act.type]||'PLAYING A GAME';
+      document.getElementById('dc-activity-name').textContent=act.name;
+      document.getElementById('dc-activity-sub').textContent=act.details||act.state||'';
+      const actIcon=document.getElementById('dc-activity-icon');
+      if(act.assets?.large_image&&act.application_id){
+        const img=act.assets.large_image;
+        actIcon.src=img.startsWith('mp:external/')?'https://media.discordapp.net/external/'+img.replace('mp:external/',''):`${CDN}/app-assets/${act.application_id}/${img}.png?size=64`;
+        actIcon.style.display='block';
+      } else actIcon.style.display='none';
+    } else actSection.style.display='none';
   }
 
-  card.style.display = 'flex';
-  if (!card.classList.contains('visible')) card.classList.add('visible');
+  /* Show card with fade-in */
+  if(card.style.display==='none'||!card.style.display){
+    card.style.display='flex';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      card.style.opacity='1';
+      card.style.transform='translateY(0)';
+    }));
+  }
 }
 
-function connectLanyard() {
-  const ws = new WebSocket('wss://api.lanyard.rest/socket');
-  let hb = null;
-  ws.onmessage = e => {
-    const msg = JSON.parse(e.data);
-    if (msg.op === 1) {
-      hb = setInterval(() => ws.send(JSON.stringify({op:3})), msg.d.heartbeat_interval);
-      ws.send(JSON.stringify({op:2, d:{subscribe_to_id: DISCORD_ID}}));
+function connectLanyard(){
+  const ws=new WebSocket('wss://api.lanyard.rest/socket');
+  let hb=null;
+  ws.onmessage=e=>{
+    const msg=JSON.parse(e.data);
+    if(msg.op===1){
+      hb=setInterval(()=>ws.send(JSON.stringify({op:3})),msg.d.heartbeat_interval);
+      ws.send(JSON.stringify({op:2,d:{subscribe_to_id:DISCORD_ID}}));
     }
-    if (msg.op === 0) renderCard(msg.d);
+    if(msg.op===0)renderCard(msg.d);
   };
-  ws.onclose = () => { clearInterval(hb); setTimeout(connectLanyard, 3000); };
-  ws.onerror = () => ws.close();
+  ws.onclose=()=>{clearInterval(hb);setTimeout(connectLanyard,3000);};
+  ws.onerror=()=>ws.close();
 }
 connectLanyard();
 </script>
 
 <script>
-  window.igBannerConfig = { lang: 'en', igr: 'aragasu', banners: ['my-instant-gaming-banner'] };
+  window.igBannerConfig={lang:'en',igr:'aragasu',banners:['my-instant-gaming-banner']};
 </script>
 <script src="https://www.instant-gaming.com/api/banner/partner/loader.js" defer></script>
 </body>
