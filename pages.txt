@@ -34,15 +34,6 @@ Button
 /button
 Oh a button
 
-Admin Panel
-/admin
-Totally real admin panel
-
-
 Test
 /test
 uhh
-
-Secret
-/secret
-shhhh
