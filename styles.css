@@ -11,11 +11,9 @@ body {
   color: #fff;
   display: flex;
   justify-content: center;
-  background: #050008; 
+  background: #050008;
   overflow-x: hidden;
 }
-
-/* Background GIF from images folder */
 body::before {
   content: "";
   position: fixed;
@@ -35,15 +33,16 @@ body::before {
   padding: 3rem 1rem;
 }
 
-/* === Avatar Style === */
+/* ── Avatar ── */
 .avatar-wrapper {
   padding: 4px;
   background: linear-gradient(45deg, #a044ff, #6a11cb);
   border-radius: 50%;
-  box-shadow: 0 0 25px rgba(160, 68, 255, 0.4);
+  box-shadow: 0 0 25px rgba(160,68,255,0.4);
   margin-bottom: 0.5rem;
+  cursor: pointer;
+  user-select: none;
 }
-
 .avatar {
   width: 100px;
   height: 100px;
@@ -55,21 +54,19 @@ body::before {
   align-items: center;
   justify-content: center;
 }
-
 .avatar img {
   width: 100%;
   height: 100%;
-  object-fit: contain; 
+  object-fit: contain;
 }
 
-/* === Typography === */
+/* ── Typography ── */
 h1 {
   font-size: clamp(2.5rem, 10vw, 4rem);
   font-weight: 700;
   letter-spacing: -1px;
   text-transform: lowercase;
 }
-
 .pronouns {
   font-size: 0.8rem;
   opacity: 0.6;
@@ -78,92 +75,304 @@ h1 {
   margin-top: -8px;
 }
 
-/* === Social Icons === */
-.social-icons {
+/* ── Social Icons ── */
+.social-icons { display: flex; gap: 1.5rem; margin: 1rem 0; }
+.social-icons a { font-size: 1.4rem; color: #c68efa; transition: all 0.3s ease; }
+.social-icons a:hover { color: #fff; transform: translateY(-3px); }
+
+/* ════════════════════════════════════════
+   DISCORD CARD
+   ════════════════════════════════════════ */
+.dc-card {
+  width: min(420px, 92vw);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #111018;
+  border: 1px solid rgba(255,255,255,0.07);
+  text-decoration: none;
+  color: inherit;
   display: flex;
-  gap: 1.5rem;
-  margin: 1rem 0;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  cursor: pointer;
+}
+.dc-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 44px rgba(160,68,255,0.2);
+  border-color: rgba(160,68,255,0.3);
 }
 
-.social-icons a {
-  font-size: 1.4rem;
+/* Banner */
+.dc-banner {
+  position: relative;
+  height: 88px;
+  background-size: cover;
+  background-position: center top;
+  background-color: #1e1535;
+  flex-shrink: 0;
+}
+.dc-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(17,16,24,0.6) 100%);
+}
+
+/* Body */
+.dc-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 0 0.9rem 0.9rem 0.9rem;
+  margin-top: -26px;
+  position: relative;
+}
+
+/* Avatar area */
+.dc-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+}
+.dc-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 4px solid #111018;
+  background: #1e1535;
+  display: block;
+  object-fit: cover;
+}
+.dc-decoration {
+  position: absolute;
+  inset: -12px;
+  width: calc(100% + 24px);
+  height: calc(100% + 24px);
+  pointer-events: none;
+  object-fit: contain;
+  z-index: 2;
+}
+.dc-status-dot {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  z-index: 3;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+/* Info column */
+.dc-info {
+  flex: 1;
+  min-width: 0;
+  padding-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+}
+
+/* Top row: name cluster + badges */
+.dc-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  flex-wrap: nowrap;
+}
+.dc-names-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.dc-displayname {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f3e8ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+/* Server tag */
+.dc-server-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(160,68,255,0.18);
+  border: 1px solid rgba(160,68,255,0.3);
+  border-radius: 6px;
+  padding: 1px 5px 1px 3px;
+  font-size: 0.68rem;
+  font-weight: 600;
   color: #c68efa;
-  transition: all 0.3s ease;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.dc-server-tag-badge {
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  object-fit: contain;
 }
 
-.social-icons a:hover {
-  color: #fff;
-  transform: translateY(-3px);
+/* Badges */
+.dc-badges {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.dc-badge {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 3px rgba(160,68,255,0.3));
+  transition: transform 0.2s;
+}
+.dc-badge:hover { transform: scale(1.3); }
+
+/* Username */
+.dc-username {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.38);
+  display: block;
 }
 
-/* === Cards & Glassmorphism === */
+/* Activity */
+.dc-activity-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-top: 0.25rem;
+  padding-top: 0.3rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.dc-activity-label {
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.35);
+}
+.dc-activity-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.dc-activity-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.dc-activity-text {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Spotify */
+.dc-spotify {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.3rem;
+  padding-top: 0.3rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.dc-spotify-art {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.dc-spotify-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.sp-song {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #f3e8ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sp-artist {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dc-spotify-bar-wrap {
+  margin-top: 0.25rem;
+  width: 100%;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.dc-spotify-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #a044ff, #1db954);
+  border-radius: 99px;
+  transition: width 1s linear;
+  width: 0%;
+}
+
+/* ── Generic cards ── */
 .link-list, .info-list {
   width: min(420px, 92vw);
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
-
 .link-card {
   padding: 1.2rem 1.5rem;
   border-radius: 22px;
   text-decoration: none;
   color: white;
-  background: rgba(15, 5, 20, 0.65);
+  background: rgba(15,5,20,0.65);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255,255,255,0.08);
   transition: all 0.3s ease;
   text-align: center;
 }
+.link-card strong { display: block; font-size: 1.1rem; color: #f3e8ff; }
+.link-card span   { font-size: 0.85rem; opacity: 0.7; }
+.link-card:hover  { background: rgba(160,68,255,0.12); border-color: rgba(160,68,255,0.4); transform: translateY(-4px); }
 
-.link-card strong {
-  display: block;
-  font-size: 1.1rem;
-  color: #f3e8ff;
+/* ── Animations ── */
+.fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ── Clock ── */
+#live-clock {
+  position: fixed; bottom: 1.2rem; right: 1.4rem;
+  font-size: 0.75rem; letter-spacing: 0.1em;
+  color: rgba(198,142,250,0.5); z-index: 100;
+  pointer-events: none; user-select: none;
 }
 
-.link-card span {
-  font-size: 0.85rem;
-  opacity: 0.7;
-}
+/* ── Confetti ── */
+#confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 9999; display: none; }
 
-.link-card:hover {
-  background: rgba(160, 68, 255, 0.12);
-  border-color: rgba(160, 68, 255, 0.4);
-  transform: translateY(-4px);
-}
-
-/* === Animations === */
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-.fade-in.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* === Instant Gaming Card Style === */
-#ig-banner-wrap {
-    padding: 0.8rem;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80px;
-}
-
-#my-instant-gaming-banner {
-    width: 100%;
-}
-
-#my-instant-gaming-banner img, 
-#my-instant-gaming-banner iframe {
-    max-width: 100% !important;
-    border-radius: 12px;
-    display: block;
-    margin: 0 auto;
-}
+/* ── Instant Gaming ── */
+#ig-banner-wrap { padding: 0.8rem; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 80px; }
+#my-instant-gaming-banner { width: 100%; }
+#my-instant-gaming-banner img, #my-instant-gaming-banner iframe { max-width: 100% !important; border-radius: 12px; display: block; margin: 0 auto; }
