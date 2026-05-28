@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Something</title>
+    <style>
+        /* Minimalistisches Design, jetzt mit invertiertem Vibe (helleres Grau) */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1e1e1e; /* Etwas dunkler für den "Grind" */
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        #timer {
+            font-weight: bold;
+            color: #00ff66; /* Ein motivierendes "Aktivitäts-Grün" für den Timer */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 id="message">you've done something for <span id="timer">0.0s</span></h1>
+    </div>
+
+    <script>
+        let timeActive = 0; // Gemessen in Zehntelkunden für präziseres Tracking
+        let activityInterval = null;
+        let idleTimeout = null;
+        
+        // Wie viele Millisekunden darfst du "inaktiv" sein, bevor der Reset triggert?
+        // 800ms ist knackig – wer blinzelt, verliert.
+        const IDLE_THRESHOLD = 800; 
+
+        const timerElement = document.getElementById('timer');
+
+        // Formatiert die Zeit (jetzt mit Nachkommastelle für den Stress-Faktor)
+        function formatTime(tenthsOfSecond) {
+            const totalSeconds = tenthsOfSecond / 10;
+            if (totalSeconds < 60) {
+                return `${totalSeconds.toFixed(1)}s`;
+            }
+            const minutes = Math.floor(totalSeconds / 60);
+            const remainingSeconds = (totalSeconds % 60).toFixed(1);
+            return `${minutes}m ${remainingSeconds}s`;
+        }
+
+        // Wird aufgerufen, wenn der User sich bewegt oder tippt
+        function userIsActive() {
+            // 1. Wenn der Timer noch nicht läuft, starte ihn
+            if (!activityInterval) {
+                activityInterval = setInterval(() => {
+                    timeActive++;
+                    timerElement.textContent = formatTime(timeActive);
+                }, 100); // Updatet alle 100ms
+            }
+
+            // 2. Lösche den alten "Inaktivitäts-Timer"
+            clearTimeout(idleTimeout);
+
+            // 3. Starte einen neuen "Inaktivitäts-Timer". 
+            // Wenn innerhalb von IDLE_THRESHOLD nix passiert -> RESET!
+            idleTimeout = setTimeout(resetGame, IDLE_THRESHOLD);
+        }
+
+        // Du warst zu langsam/faul -> Alles auf Null
+        function resetGame() {
+            clearInterval(activityInterval);
+            activityInterval = null;
+            timeActive = 0;
+            timerElement.textContent = "0.0s";
+        }
+
+        // Event-Listener für JEDE Form von Action
+        window.addEventListener('keydown', userIsActive);
+        window.addEventListener('mousemove', userIsActive);
+        window.addEventListener('mousedown', userIsActive);
+        window.addEventListener('wheel', userIsActive);
+        window.addEventListener('touchstart', userIsActive);
+        window.addEventListener('touchmove', userIsActive);
+
+    </script>
+</body>
+</html>
