@@ -14,6 +14,10 @@ Legacy Version
 /legacy
 Take a look back at the original design of this site
 
+Curl
+/curl
+Terminal styled variant of this site
+
 CluedGD
 /CluedGD
 CluedGD's Page
