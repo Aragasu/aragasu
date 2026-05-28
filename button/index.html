@@ -111,7 +111,7 @@
 
     <!-- Risk Mode Toggle -->
     <div class="risk-mode-container">
-        <label for="risk-mode-checkbox">Risk Mode</label>
+        <label for="risk-mode-checkbox">Safe Mode</label>
         <input type="checkbox" id="risk-mode-checkbox">
     </div>
 
@@ -123,11 +123,11 @@
         // Funktion zum Aktualisieren der Warnmeldung basierend auf dem Modus
         function updateStatusMessage() {
             if (riskModeCheckbox.checked) {
-                statusLog.textContent = "WARNING: 50/50 chance you will be redirected to the homepage.";
-                statusLog.style.color = '#aa0000'; // Deep red for risk
+                statusLog.textContent = "50/50 chance you will be redirected to the homepage.";
+                statusLog.style.color = '#666'; // Deep red for risk
             } else {
                 statusLog.textContent = "50/50 chance your browser crashes.";
-                statusLog.style.color = '#666'; // Faint gray for normal
+                statusLog.style.color = '#aa0000'; // Faint gray for normal
             }
         }
 
