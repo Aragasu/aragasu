@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>aragasu.xyz — curl</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0009;
+      color: #c68efa;
+      font-family: 'Courier New', Courier, monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    pre {
+      line-height: 1.6;
+      font-size: clamp(0.72rem, 1.8vw, 0.92rem);
+      white-space: pre;
+    }
+
+    .dim    { color: rgba(198,142,250,0.35); }
+    .bright { color: #f3e8ff; }
+    .purple { color: #a044ff; }
+    .green  { color: #7ee787; }
+    .yellow { color: #e3b341; }
+    .gray   { color: rgba(198,142,250,0.5); }
+  </style>
+</head>
+<body>
+<pre id="output"></pre>
+<script>
+const DISCORD_ID = '873234979239383040';
+
+async function getDiscordStatus() {
+  try {
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+    const data = await res.json();
+    if (!data.success) return null;
+    const d = data.data;
+    const icons = { online: '●', idle: '◑', dnd: '⊘', offline: '○' };
+    const colors = { online: 'green', idle: 'yellow', dnd: 'red', offline: 'gray' };
+    const s = d.discord_status || 'offline';
+    let activity = '';
+    if (d.listening_to_spotify && d.spotify) {
+      activity = `  🎵  ${d.spotify.song} — ${d.spotify.artist}`;
+    } else if (d.activities) {
+      const act = d.activities.find(a => a.type === 0);
+      if (act) activity = `  🎮  ${act.name}`;
+    }
+    return { status: s, icon: icons[s], colorClass: colors[s], activity };
+  } catch { return null; }
+}
+
+function tag(cls, text) {
+  return `<span class="${cls}">${text}</span>`;
+}
+
+async function render() {
+  const discord = await getDiscordStatus();
+
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('de-DE', {
+    timeZone: 'Europe/Berlin',
+    hour: '2-digit', minute: '2-digit'
+  });
+
+  const statusLine = discord
+    ? `  ${tag(discord.colorClass, discord.icon + ' discord')}   ${tag('gray', discord.status)}${discord.activity ? '\n' + tag('dim', discord.activity) : ''}`
+    : `  ${tag('gray', '○ discord')}   ${tag('dim', 'offline')}`;
+
+  const output = `
+${tag('purple', '  ██████╗ ██████╗  █████╗  ██████╗  █████╗ ███████╗██╗   ██╗')}
+${tag('purple', '  ██╔══██╗██╔══██╗██╔══██╗██╔════╝ ██╔══██╗██╔════╝██║   ██║')}
+${tag('purple', '  ███████║██████╔╝███████║██║  ███╗███████║███████╗██║   ██║')}
+${tag('dim',    '  ██╔══██║██╔══██╗██╔══██║██║   ██║██╔══██║╚════██║██║   ██║')}
+${tag('dim',    '  ██║  ██║██║  ██║██║  ██║╚██████╔╝██║  ██║███████║╚██████╔╝')}
+${tag('dim',    '  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ')}
+
+  ${tag('dim', '──────────────────────────────────────────────────')}
+
+  ${tag('gray', 'who')}      ${tag('bright', 'aragasu')}  ${tag('dim', '(he/him)')}
+  ${tag('gray', 'where')}    ${tag('bright', 'kempten, germany')}
+  ${tag('gray', 'doing')}    ${tag('bright', 'dev · design · building stuff')}
+
+  ${tag('dim', '──────────────────────────────────────────────────')}
+
+  ${tag('gray', 'github')}   ${tag('purple', 'github.com/Aragasu')}
+  ${tag('gray', 'discord')}  ${tag('purple', 'discord.com/users/873234979239383040')}
+  ${tag('gray', 'site')}     ${tag('purple', 'aragasu.xyz')}
+
+  ${tag('dim', '──────────────────────────────────────────────────')}
+
+${statusLine}
+
+  ${tag('dim', '──────────────────────────────────────────────────')}
+  ${tag('dim', `local time  ${timeStr} CET  ·  try the site in a real browser`)}
+
+`.trimStart();
+
+  document.getElementById('output').innerHTML = output;
+}
+
+render();
+</script>
+</body>
+</html>
