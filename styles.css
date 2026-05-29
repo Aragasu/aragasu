@@ -57,6 +57,7 @@
   --clock-color:   rgba(148,155,164,.6);
   --social-color:  #5865f2;
   --scrollbar:     rgba(88,101,242,.5);
+  --cursor:        url('images/cursor.cur'), auto;
 }
 
 [data-theme="vscode"] {
@@ -85,6 +86,7 @@
   --clock-color:   rgba(212,212,212,.4);
   --social-color:  #007acc;
   --scrollbar:     rgba(0,122,204,.45);
+  --cursor:        url('images/cursor.cur'), auto;
 }
 
 [data-theme="curl"] {
@@ -113,6 +115,7 @@
   --clock-color:   rgba(198,142,250,.4);
   --social-color:  #c68efa;
   --scrollbar:     rgba(198,142,250,.35);
+  --cursor:        url('images/cursor.cur'), auto;
 }
 
 [data-theme="steam"] {
@@ -142,6 +145,7 @@
   --clock-color:   rgba(102,192,244,.45);
   --social-color:  #66c0f4;
   --scrollbar:     rgba(102,192,244,.4);
+  --cursor:        url('images/cursor.cur'), auto;
 }
 
 [data-theme="mc-overworld"] {
@@ -170,6 +174,7 @@
   --clock-color:   rgba(93,187,99,.5);
   --social-color:  #5dbb63;
   --scrollbar:     rgba(93,187,99,.4);
+  --cursor:        url('images/cursor.cur'), auto;
 }
 
 [data-theme="mc-nether"] {
@@ -198,6 +203,7 @@
   --clock-color:   rgba(255,106,0,.5);
   --social-color:  #ff6a00;
   --scrollbar:     rgba(255,106,0,.4);
+  --cursor:        url('images/cursor.cur'), auto;
 }
 
 [data-theme="mc-end"] {
@@ -225,6 +231,7 @@
   --clock-color:   rgba(200,125,255,.45);
   --social-color:  #c87dff;
   --scrollbar:     rgba(200,125,255,.4);
+  --cursor:        url('images/cursor.cur'), auto;
 }
 
 [data-theme="aero"] {
@@ -252,8 +259,37 @@
   --clock-color:   rgba(255,255,255,.55);
   --social-color:  #00ddff;
   --scrollbar:     rgba(0,170,255,.5);
+  --cursor:        url('images/cursor.cur'), auto;
 }
 
+:root, [data-theme="exit"] {
+  --bg:            #1a0800;
+  --bg-image:      url('images/exitschildzeigtgeradeaus.png');
+  --bg-opacity:    0.67;
+  --accent:        #ff0000;
+  --accent-2:      #c40000;
+  --accent-glow:   rgba(255, 0, 0, 0.4);
+  --accent-soft:   rgba(255, 0, 0, 0.12);
+  --accent-border: rgba(255, 0, 0, 0.5);
+  --text:          #ffc8c8;
+  --text-muted:    rgba(255, 200, 200, 0.45);
+  --text-sub:      rgba(255, 200, 200, 0.5);
+  --card-bg:       rgba(30, 0, 0, 0.72);
+  --card-border:   rgba(255, 0, 0, 0.12);
+  --card-hover-bg: rgba(255, 0, 0, 0.12);
+  --dc-bg:         #2a0000;
+  --dc-banner-bg:  #3d0000;
+  --drawer-bg:     rgba(20, 0, 0, 0.98);
+  --drawer-border: rgba(255, 0, 0, 0.15);
+  --toggle-bg:     rgba(30, 0, 0, 0.88);
+  --avatar-ring:   linear-gradient(45deg,#ff6a00,#c43b00);
+  --avatar-border: #1a0000;
+  --font-body:     'Outfit', sans-serif;
+  --clock-color:   rgba(255, 0, 0, 0.5);
+  --social-color:  #ff0000;
+  --scrollbar:     rgba(255, 0, 0, 0.4);
+  --cursor:        url('images/cursor.cur'), auto;
+}
 /* ══════════════════════════════════════════════════════════
    BASE STYLES — all using CSS vars
    ══════════════════════════════════════════════════════════ */
