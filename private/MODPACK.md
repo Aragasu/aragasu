@@ -2,7 +2,7 @@
 
 ---
 
-### Modloader
+## Modloader
 - **NeoForge** — moderner Forge-Nachfolger, aktiv gepflegt, komplettes Create-Addon-Ökosystem verfügbar
 
 ---
@@ -46,7 +46,7 @@
 
 ---
 
-## Meine Vorschläge
+# Meine Vorschläge
 
 ### Create Addons
 - [Create Crafts & Additions](https://modrinth.com/mod/createaddition) — fügt Elektrizität und neue Maschinen zu Create hinzu
