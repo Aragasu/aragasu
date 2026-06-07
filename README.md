@@ -44,7 +44,7 @@ Building Discord bots, web apps, and Roblox projects.
 
 
 
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=Aragasu&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=9b87f5&icon_color=9b87f5&text_color=ffffff)
+![GitHub Stats](https://streak-stats.demolab.com?user=Aragasu&theme=tokyonight&hide_border=true)
 
 
 
