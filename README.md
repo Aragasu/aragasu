@@ -44,13 +44,13 @@ Building Discord bots, web apps, and Roblox projects.
 
 
 
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=aragasu&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=9b87f5&icon_color=9b87f5&text_color=ffffff)
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=Aragasu&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=9b87f5&icon_color=9b87f5&text_color=ffffff)
 
 
 
 
 
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=aragasu&layout=compact&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=9b87f5&text_color=ffffff)
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=Aragasu&layout=compact&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=9b87f5&text_color=ffffff)
 
 
 
