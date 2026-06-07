@@ -1,6 +1,6 @@
 # aragasu
 
-Developer from Kempten, Germany.  
+Developer from Germany.  
 Building Discord bots, web apps, and Roblox projects.
 
 ---
@@ -47,10 +47,6 @@ Building Discord bots, web apps, and Roblox projects.
 ![GitHub Stats](https://streak-stats.demolab.com?user=Aragasu&theme=tokyonight&hide_border=true)
 
 
-
-
-
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=Aragasu&layout=compact&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=9b87f5&text_color=ffffff)
 
 
 
