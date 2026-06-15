@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key-Value Extractor</title>
+    <style>
+        :root {
+            --bg-color: #1e1e2e;
+            --card-bg: #252538;
+            --text-color: #cdd6f4;
+            --accent-color: #cba6f7;
+            --border-color: #414559;
+            --success-color: #a6e3a1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: var(--accent-color);
+            font-size: 24px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #a6adc8;
+        }
+
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            background-color: #181825;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-family: 'Courier New', Courier, monospace;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 200px;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #11111b;
+            border-left: 4px solid var(--accent-color);
+            border-radius: 4px;
+            min-height: 50px;
+        }
+
+        .result-title {
+            font-weight: bold;
+            color: var(--success-color);
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 16px;
+        }
+
+        .no-result {
+            color: #f38ba8;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Key-Value Finder</h1>
+    
+    <div class="form-group">
+        <label for="rawText">1. Text hier hineinkopieren:</label>
+        <textarea id="rawText" placeholder="npm_lifecycle_event=start&#10;OS=Windows_NT..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="searchKey">2. Welchen Key suchst du?</label>
+        <input type="text" id="searchKey" placeholder="z.B. OS oder Path" autocomplete="off">
+    </div>
+
+    <div class="result-box">
+        <div class="result-title">Ergebnis:</div>
+        <div id="output" class="no-result">Gib einen Text und einen Suchbegriff ein...</div>
+    </div>
+</div>
+
+<script>
+    const rawTextEl = document.getElementById('rawText');
+    const searchKeyEl = document.getElementById('searchKey');
+    const outputEl = document.getElementById('output');
+
+    function findValue() {
+        const text = rawTextEl.value;
+        const searchKey = searchKeyEl.value.trim();
+
+        // Wenn eines der Felder leer ist
+        if (!text || !searchKey) {
+            outputEl.className = 'no-result';
+            outputEl.textContent = 'Gib einen Text und einen Suchbegriff ein...';
+            return;
+        }
+
+        // Text in einzelne Zeilen aufteilen
+        const lines = text.split('\n');
+        
+        // Durchsuche jede Zeile
+        for (let line of lines) {
+            // Prüfen, ob ein Gleichheitszeichen existiert
+            if (line.includes('=')) {
+                // Trenne an dem ERSTEN Gleichheitszeichen auf
+                const index = line.indexOf('=');
+                const key = line.substring(0, index).trim();
+                const value = line.substring(index + 1).trim();
+
+                // Groß-/Kleinschreibung ignorieren beim Vergleich
+                if (key.toLowerCase() === searchKey.toLowerCase()) {
+                    outputEl.className = 'result-value';
+                    outputEl.textContent = value;
+                    return; // Gefunden! Funktion beenden.
+                }
+            }
+        }
+
+        // Falls die Schleife durchläuft ohne Treffer
+        outputEl.className = 'no-result';
+        outputEl.textContent = `Key "${searchKey}" wurde nicht gefunden.`;
+    }
+
+    // Event-Listener triggern die Suche sofort bei jeder Eingabe
+    rawTextEl.addEventListener('input', findValue);
+    searchKeyEl.addEventListener('input', findValue);
+</script>
+
+</body>
+</html>
