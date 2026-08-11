@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg-secondary: #13131a;
+    --accent: #9b87f5;
+    --accent-hover: #7c5cfc;
+    --text: #eaeaf0;
+    --text-dim: #8a8a9a;
+    --border: #232330;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .stats {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-left: 12px;
+  }
+
+  .controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  button {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 13px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  button:hover { border-color: var(--accent); color: var(--accent); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button:disabled:hover { border-color: var(--border); color: var(--text); }
+
+  button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0a0a0f;
+  }
+  button.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #0a0a0f; }
+
+  main { padding: 32px; }
+
+  #status {
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 40px 0;
+    text-align: center;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .card {
+    position: relative;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .card:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .card img.loaded { opacity: 1; }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 45%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+  }
+
+  .card:hover .overlay, .card.selected .overlay { opacity: 1; }
+
+  .checkbox {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid rgba(255,255,255,0.7);
+    background: rgba(10,10,15,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+  }
+
+  .card.selected .checkbox {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .checkbox svg { width: 14px; height: 14px; display: none; }
+  .card.selected .checkbox svg { display: block; }
+
+  .bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .filename {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #fff;
+    word-break: break-all;
+    max-width: 75%;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  }
+
+  .dl-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(10,10,15,0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .dl-btn:hover { background: var(--accent); border-color: var(--accent); }
+  .dl-btn svg { width: 16px; height: 16px; }
+
+  #empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(6, 6, 10, 0.96);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox.open { display: flex; }
+
+  .lightbox img {
+    max-width: 88vw;
+    max-height: 82vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .lightbox-top {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+    right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .lightbox-filename {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .lightbox-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .lightbox-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .lightbox-btn:hover { border-color: var(--accent); background: rgba(155, 135, 245, 0.12); }
+  .lightbox-btn svg { width: 18px; height: 18px; stroke: var(--text); }
+  .lightbox-btn:hover svg { stroke: var(--accent); }
+
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .lightbox-nav:hover { border-color: var(--accent); background: rgba(155, 135, 245, 0.12); }
+  .lightbox-nav svg { width: 20px; height: 20px; stroke: var(--text); }
+  .lightbox-nav:hover svg { stroke: var(--accent); }
+  .lightbox-nav.prev { left: 24px; }
+  .lightbox-nav.next { right: 24px; }
+
+  .lightbox-counter {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  @media (max-width: 600px) {
+    .lightbox-nav { width: 38px; height: 38px; }
+    .lightbox-nav.prev { left: 8px; }
+    .lightbox-nav.next { right: 8px; }
+    .lightbox-top { left: 12px; right: 12px; top: 12px; }
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 16px; }
+    main { padding: 16px; }
+    .controls { width: 100%; }
+    button { flex: 1; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; align-items:baseline;">
+    <h1>Gallery</h1>
+    <span class="stats" id="stats">lädt…</span>
+  </div>
+  <div class="controls">
+    <button id="selectAllBtn">Alle auswählen</button>
+    <button id="downloadSelectedBtn" disabled>Auswahl laden (0)</button>
+    <button id="downloadAllBtn" class="primary">Alle laden (.zip)</button>
+  </div>
+</header>
+
+<main>
+  <div id="status">Bilder werden geladen…</div>
+  <div class="grid" id="grid"></div>
+  <div id="empty" style="display:none;">Keine Bilder in /images gefunden.</div>
+</main>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-top">
+    <span class="lightbox-filename" id="lightboxFilename"></span>
+    <div class="lightbox-actions">
+      <div class="lightbox-btn" id="lightboxDownload" title="Herunterladen">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+      </div>
+      <div class="lightbox-btn" id="lightboxClose" title="Schließen">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </div>
+    </div>
+  </div>
+  <div class="lightbox-nav prev" id="lightboxPrev" title="Vorheriges">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+  </div>
+  <img id="lightboxImg" src="" alt="">
+  <div class="lightbox-nav next" id="lightboxNext" title="Nächstes">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+  </div>
+  <div class="lightbox-counter" id="lightboxCounter"></div>
+</div>
+
+<script>
+/* ---------- KONFIG ---------- */
+// GitHub Repo, aus dem die /images gelesen werden. Anpassen an dein Repo.
+const GH_USER   = "DEIN-USERNAME";
+const GH_REPO   = "DEIN-REPO";
+const GH_BRANCH = "main";
+const IMAGES_PATH = "images";
+/* ----------------------------- */
+
+const IMG_EXT = /\.(png|jpe?g|gif|webp|avif|svg)$/i;
+
+const grid = document.getElementById('grid');
+const statusEl = document.getElementById('status');
+const emptyEl = document.getElementById('empty');
+const statsEl = document.getElementById('stats');
+const selectAllBtn = document.getElementById('selectAllBtn');
+const downloadSelectedBtn = document.getElementById('downloadSelectedBtn');
+const downloadAllBtn = document.getElementById('downloadAllBtn');
+
+let images = [];       // [{name, url}]
+let selected = new Set();
+
+async function loadImages() {
+  const useApi = GH_USER !== "DEIN-USERNAME" && GH_REPO !== "DEIN-REPO";
+
+  if (useApi) {
+    try {
+      const res = await fetch(`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${IMAGES_PATH}?ref=${GH_BRANCH}`);
+      if (!res.ok) throw new Error(`GitHub API ${res.status}`);
+      const data = await res.json();
+      images = data
+        .filter(f => f.type === 'file' && IMG_EXT.test(f.name))
+        .map(f => ({ name: f.name, url: f.download_url }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    } catch (err) {
+      statusEl.textContent = `Fehler beim Laden der Bilderliste: ${err.message}`;
+      return;
+    }
+  } else {
+    // Fallback ohne Konfiguration: versucht lokale manifest.json in /images
+    try {
+      const res = await fetch(`${IMAGES_PATH}/manifest.json`);
+      if (!res.ok) throw new Error('manifest.json nicht gefunden');
+      const list = await res.json();
+      images = list
+        .filter(name => IMG_EXT.test(name))
+        .map(name => ({ name, url: `${IMAGES_PATH}/${name}` }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    } catch (err) {
+      statusEl.textContent = 'Keine Konfiguration gefunden. GH_USER/GH_REPO im Script setzen, oder images/manifest.json (JSON-Array mit Dateinamen) anlegen.';
+      return;
+    }
+  }
+
+  statusEl.style.display = 'none';
+  render();
+}
+
+function render() {
+  if (images.length === 0) {
+    emptyEl.style.display = 'block';
+    updateStats();
+    return;
+  }
+
+  grid.innerHTML = '';
+  images.forEach(img => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.name = img.name;
+
+    const imageEl = document.createElement('img');
+    imageEl.src = img.url;
+    imageEl.loading = 'lazy';
+    imageEl.alt = img.name;
+    imageEl.onload = () => imageEl.classList.add('loaded');
+
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+
+    const checkbox = document.createElement('div');
+    checkbox.className = 'checkbox';
+    checkbox.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0f" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+    checkbox.onclick = (e) => { e.stopPropagation(); toggleSelect(card, img.name); };
+
+    const bottomRow = document.createElement('div');
+    bottomRow.className = 'bottom-row';
+
+    const filename = document.createElement('div');
+    filename.className = 'filename';
+    filename.textContent = img.name;
+
+    const dlBtn = document.createElement('div');
+    dlBtn.className = 'dl-btn';
+    dlBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>';
+    dlBtn.title = 'Einzeln herunterladen';
+    dlBtn.onclick = (e) => { e.stopPropagation(); downloadSingle(img); };
+
+    bottomRow.appendChild(filename);
+    bottomRow.appendChild(dlBtn);
+    overlay.appendChild(checkbox);
+    overlay.appendChild(bottomRow);
+
+    card.appendChild(imageEl);
+    card.appendChild(overlay);
+
+    card.onclick = () => openLightbox(img.name);
+
+    grid.appendChild(card);
+  });
+
+  updateStats();
+}
+
+function toggleSelect(card, name) {
+  if (selected.has(name)) {
+    selected.delete(name);
+    card.classList.remove('selected');
+  } else {
+    selected.add(name);
+    card.classList.add('selected');
+  }
+  updateStats();
+}
+
+function updateStats() {
+  statsEl.textContent = `${images.length} Bild${images.length === 1 ? '' : 'er'}`;
+  downloadSelectedBtn.textContent = `Auswahl laden (${selected.size})`;
+  downloadSelectedBtn.disabled = selected.size === 0;
+  selectAllBtn.textContent = selected.size === images.length && images.length > 0 ? 'Auswahl aufheben' : 'Alle auswählen';
+}
+
+selectAllBtn.onclick = () => {
+  const allSelected = selected.size === images.length && images.length > 0;
+  document.querySelectorAll('.card').forEach(card => {
+    if (allSelected) {
+      card.classList.remove('selected');
+    } else {
+      card.classList.add('selected');
+      selected.add(card.dataset.name);
+    }
+  });
+  if (allSelected) selected.clear();
+  updateStats();
+};
+
+async function downloadSingle(img) {
+  try {
+    const res = await fetch(img.url);
+    const blob = await res.blob();
+    triggerDownload(blob, img.name);
+  } catch (err) {
+    alert(`Download fehlgeschlagen: ${img.name}`);
+  }
+}
+
+async function downloadSelected() {
+  const chosen = images.filter(img => selected.has(img.name));
+  await downloadAsZip(chosen, 'auswahl.zip');
+}
+
+async function downloadAll() {
+  await downloadAsZip(images, 'alle-bilder.zip');
+}
+
+async function downloadAsZip(list, zipName) {
+  if (list.length === 0) return;
+
+  downloadAllBtn.disabled = true;
+  downloadSelectedBtn.disabled = true;
+  const originalText = statsEl.textContent;
+
+  const zip = new JSZip();
+  let done = 0;
+
+  await Promise.all(list.map(async img => {
+    try {
+      const res = await fetch(img.url);
+      const blob = await res.blob();
+      zip.file(img.name, blob);
+    } catch (err) {
+      console.error(`Konnte ${img.name} nicht laden`, err);
+    } finally {
+      done++;
+      statsEl.textContent = `Zippe ${done}/${list.length}…`;
+    }
+  }));
+
+  const content = await zip.generateAsync({ type: 'blob' });
+  triggerDownload(content, zipName);
+
+  statsEl.textContent = originalText;
+  downloadAllBtn.disabled = false;
+  updateStats();
+}
+
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+downloadSelectedBtn.onclick = downloadSelected;
+downloadAllBtn.onclick = downloadAll;
+
+/* ---------- Lightbox ---------- */
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+const lightboxFilename = document.getElementById('lightboxFilename');
+const lightboxCounter = document.getElementById('lightboxCounter');
+const lightboxClose = document.getElementById('lightboxClose');
+const lightboxPrev = document.getElementById('lightboxPrev');
+const lightboxNext = document.getElementById('lightboxNext');
+const lightboxDownload = document.getElementById('lightboxDownload');
+
+let lightboxIndex = -1;
+
+function openLightbox(name) {
+  lightboxIndex = images.findIndex(img => img.name === name);
+  if (lightboxIndex === -1) return;
+  showLightboxImage();
+  lightbox.classList.add('open');
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  lightboxImg.src = '';
+}
+
+function showLightboxImage() {
+  const img = images[lightboxIndex];
+  lightboxImg.src = img.url;
+  lightboxImg.alt = img.name;
+  lightboxFilename.textContent = img.name;
+  lightboxCounter.textContent = `${lightboxIndex + 1} / ${images.length}`;
+}
+
+function lightboxStep(dir) {
+  lightboxIndex = (lightboxIndex + dir + images.length) % images.length;
+  showLightboxImage();
+}
+
+lightboxClose.onclick = closeLightbox;
+lightboxPrev.onclick = () => lightboxStep(-1);
+lightboxNext.onclick = () => lightboxStep(1);
+lightboxDownload.onclick = () => downloadSingle(images[lightboxIndex]);
+
+lightbox.addEventListener('click', (e) => {
+  if (e.target === lightbox) closeLightbox();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (!lightbox.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lightboxStep(-1);
+  if (e.key === 'ArrowRight') lightboxStep(1);
+});
+
+loadImages();
+</script>
+
+</body>
+</html>
