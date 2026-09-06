@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nothing</title>
+    <meta name="description" content="A page about doing absolutely nothing.">
+    <meta name="theme-color" content="#000000">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --text: #e8e6e3;
+            --dim: rgba(232, 230, 227, .35);
+            --faint: rgba(232, 230, 227, .12);
+            --glow: rgba(160, 68, 255, .10);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            color: var(--text);
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            user-select: none;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        /* the void breathes */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 55% 45% at 50% 46%, var(--glow), transparent 70%);
+            animation: breathe 7s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: .55; transform: scale(1); }
+            50%      { opacity: 1;   transform: scale(1.06); }
+        }
+
+        /* drifting dust */
+        .dust {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: .5;
+        }
+
+        .container {
+            position: relative;
+            text-align: center;
+            animation: settle 1.2s cubic-bezier(.16, 1, .3, 1) both;
+        }
+
+        @keyframes settle {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .kicker {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .68rem;
+            letter-spacing: .35em;
+            text-transform: uppercase;
+            color: var(--faint);
+            margin-bottom: 1.6rem;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 4.5vw, 2.4rem);
+            font-weight: 300;
+            letter-spacing: .02em;
+            color: var(--dim);
+        }
+
+        #timer {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            font-size: clamp(2.6rem, 9vw, 5rem);
+            letter-spacing: -.02em;
+            color: var(--text);
+            margin-top: .4rem;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 40px rgba(255, 255, 255, .15);
+        }
+
+        /* milestone whisper */
+        #whisper {
+            height: 1.4em;
+            margin-top: 1.8rem;
+            font-size: .85rem;
+            font-style: italic;
+            color: var(--dim);
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 1.2s ease, transform 1.2s ease;
+        }
+        #whisper.show { opacity: 1; transform: translateY(0); }
+
+        .record {
+            position: fixed;
+            bottom: 1.4rem;
+            left: 0; right: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .68rem;
+            letter-spacing: .12em;
+            color: var(--faint);
+        }
+        .record b { color: var(--dim); font-weight: 500; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas class="dust" id="dust" aria-hidden="true"></canvas>
+
+<div class="container">
+    <div class="kicker">the art of nothing</div>
+    <h1>you've done nothing for</h1>
+    <span id="timer">0s</span>
+    <p id="whisper"></p>
+</div>
+
+<p class="record" id="record">personal record — <b>0s</b></p>
+
+<script>
+"use strict";
+
+const timerEl   = document.getElementById('timer');
+const whisperEl = document.getElementById('whisper');
+const recordEl  = document.getElementById('record');
+
+let seconds = 0;
+let timerId = null;
+let whisperTimeout = null;
+
+const WHISPERS = [
+    [10,    'impressive.'],
+    [20,    'dont move a muscle.'],
+    [30,    'you are getting good at this.'],
+    [45,    'still nothing. remarkable.'],
+    [60,    'a whole minute of pure nothing.'],
+    [90,    'the void appreciates the company.'],
+    [120,   'two minutes. the nothing grows stronger.'],
+    [180,   'at this point, this is a lifestyle.'],
+    [300,   'five minutes of nothing. seek help. or dont.'],
+    [600,   'ten minutes. you have transcended.'],
+    [1200,  'the nothing has accepted you as one of its own.']
+];
+
+/* ── record (persists) ── */
+let best = Number(localStorage.getItem('nothing-record') || 0);
+paintRecord();
+
+function fmt(t) {
+    if (t < 60) return `${t}s`;
+    const m = Math.floor(t / 60), s = t % 60;
+    if (m < 60) return `${m}m ${s}s`;
+    return `${Math.floor(m / 60)}h ${m % 60}m ${s}s`;
+}
+
+function paintRecord() {
+    recordEl.innerHTML = `personal record — <b>${fmt(best)}</b>`;
+}
+
+/* ── the nothing ── */
+function startTimer() {
+    if (timerId) return;
+    timerId = setInterval(() => {
+        if (document.hidden) return;         /* another tab = doing something */
+        seconds++;
+        timerEl.textContent = fmt(seconds);
+        document.title = `nothing · ${fmt(seconds)}`;
+
+        if (seconds > best) {
+            best = seconds;
+            localStorage.setItem('nothing-record', best);
+            paintRecord();
+        }
+
+        const w = WHISPERS.find(([t]) => t === seconds);
+        if (w) showWhisper(w[1]);
+    }, 1000);
+}
+
+function showWhisper(text) {
+    whisperEl.textContent = text;
+    whisperEl.classList.add('show');
+    clearTimeout(whisperTimeout);
+    whisperTimeout = setTimeout(() => whisperEl.classList.remove('show'), 5000);
+}
+
+/* every action betrays the nothing */
+function resetTimer() {
+    if (seconds > 0) {
+        seconds = 0;
+        timerEl.textContent = '0s';
+        document.title = 'nothing';
+        whisperEl.classList.remove('show');
+    }
+}
+
+window.addEventListener('keydown', resetTimer);
+window.addEventListener('mousemove', resetTimer);
+window.addEventListener('mousedown', resetTimer);
+window.addEventListener('wheel', resetTimer);
+window.addEventListener('touchstart', resetTimer);
+window.addEventListener('touchmove', resetTimer);
+
+startTimer();
+
+/* ── dust ── */
+(function () {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const c = document.getElementById('dust'), x = c.getContext('2d');
+    let parts = [];
+    function size() {
+        c.width = innerWidth; c.height = innerHeight;
+        parts = Array.from({ length: Math.min(60, c.width * c.height / 25000 | 0) }, () => ({
+            x: Math.random() * c.width,
+            y: Math.random() * c.height,
+            r: Math.random() * 1.1 + .2,
+            vy: .05 + Math.random() * .1,
+            a: Math.random() * Math.PI * 2
+        }));
+    }
+    size();
+    addEventListener('resize', size);
+    (function draw() {
+        x.clearRect(0, 0, c.width, c.height);
+        for (const p of parts) {
+            p.y -= p.vy; p.a += .01;
+            if (p.y < -4) { p.y = c.height + 4; p.x = Math.random() * c.width; }
+            x.globalAlpha = .12 + Math.abs(Math.sin(p.a)) * .18;
+            x.fillStyle = '#fff';
+            x.beginPath();
+            x.arc(p.x, p.y, p.r, 0, 7);
+            x.fill();
+        }
+        requestAnimationFrame(draw);
+    })();
+})();
+</script>
+</body>
+</html>

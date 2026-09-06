@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Backrooms</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            overflow: hidden;
+        }
+
+        #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="video-container">
+        <video id="bg-video" loop playsinline autoplay>
+            <source src="video.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <script>
+        const videoElement = document.getElementById('bg-video');
+
+        // Prüft ob ?mute oder &mute in der URL vorhanden ist
+        const params = new URLSearchParams(window.location.search);
+        const shouldMute = params.has('mute');
+
+        videoElement.muted = shouldMute;
+
+        videoElement.play().catch(() => {
+            // Browser blockt Autoplay mit Ton -> stumm erzwingen
+            videoElement.muted = true;
+            videoElement.play();
+        });
+    </script>
+</body>
+</html>

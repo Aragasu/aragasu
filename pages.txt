@@ -1,0 +1,31 @@
+Home
+#
+This Page
+
+Instant Gaming
+/instantgaming
+Access exclusive gaming deals via my affiliate link
+
+Legacy Version
+/legacy
+Take a look back at the original design of this site
+
+Curl
+/curl
+Terminal styled variant of this site
+
+Nothing
+/nothing
+A browser-based recreation of the idle game "Nothing".
+
+Something
+/something
+A browser-based recreation of the game "Something".
+
+Image2Map
+/image2map
+Command generator for the /image2map Fabric mod command
+
+Key-Value Finder
+/valuefinder
+Extract the value of any key from logs and env dumps

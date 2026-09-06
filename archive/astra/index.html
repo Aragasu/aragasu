@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Astra Client Quick Launch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: 'Unbounded', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    h1 {
+      font-size: 4rem;
+      margin-bottom: 40px;
+    }
+
+    .button {
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 14px;
+      padding: 16px 34px;
+      font-size: 1.2rem;
+      margin: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: 0.25s;
+      display: inline-block;
+    }
+
+    .button:hover {
+      background: #444;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<div id="content" class="hidden">
+  <div>
+    <h1>Astra Client</h1>
+
+    <a href="https://github.com/Aragasu/aragasuxyz/blob/main/astra/_jxstShadow-ASTRACLIENT-backup.epk" download class="button">
+      Download backup.epk
+    </a>
+
+    <a href="https://astraclient.com/play/js/18/" class="button">
+      Launch
+    </a>
+  </div>
+</div>
+
+<script>
+  const PASSWORD = "_jxstShadow"; // ← HIER ändern
+
+  const input = prompt("Password:");
+
+  if (input === PASSWORD) {
+    document.getElementById("content").classList.remove("hidden");
+  } else {
+    document.body.innerHTML = "<h2>Access denied.</h2>";
+  }
+</script>
+
+</body>
+</html>

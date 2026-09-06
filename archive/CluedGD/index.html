@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CluedGD</title>
+  <meta name="description" content="CluedGD — upcoming Geometry Dash streamer from Australia chasing top levels. All socials in one place.">
+  <meta name="theme-color" content="#080000">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+
+  <link rel="icon" href="images/avatar.png">
+</head>
+<body>
+
+<main class="container">
+  <div class="content-wrapper">
+
+    <div class="avatar-wrapper fade-in" id="avatar-wrapper" title="clued">
+      <div class="avatar">
+        <img src="images/avatar.png" alt="CluedGD">
+      </div>
+    </div>
+
+    <h1 id="scramble-text" class="fade-in" data-text="clued">clued</h1>
+
+    <div class="social-icons fade-in" id="social-icons" aria-label="Social links"></div>
+    <div class="location fade-in" id="location"></div>
+
+    <div class="list-label fade-in">about</div>
+    <div class="info-list fade-in" id="info-list"></div>
+
+    <div class="list-label fade-in">links</div>
+    <div class="link-list fade-in" id="link-list"></div>
+
+    <div class="credits fade-in">♤ made by <a href="https://aragasu.xyz" target="_blank" rel="noopener">aragasu</a> ♤</div>
+
+  </div>
+</main>
+
+<script>
+/* ════════════════════════════════════════
+   CluedGD — cluedgd page script
+   ════════════════════════════════════════ */
+"use strict";
+
+const $ = id => document.getElementById(id);
+const clean = s => (s && s.trim().toLowerCase() === 'null') ? '' : s.trim();
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ══ Reveal ══ */
+function reveal() {
+  document.querySelectorAll('.fade-in').forEach((el, i) =>
+    setTimeout(() => el.classList.add('visible'), REDUCED ? 0 : 100 + i * 90));
+}
+document.readyState === 'loading'
+  ? document.addEventListener('DOMContentLoaded', reveal)
+  : reveal();
+
+/* ══ Scramble name ══ */
+(function () {
+  const el = $('scramble-text');
+  const finalText = el.dataset.text || el.textContent;
+  const chars = 'xyz●♤♧';
+  let done = false;
+
+  function scramble() {
+    if (done) return;
+    let frame = 0;
+    (function tick() {
+      let out = '';
+      for (let i = 0; i < finalText.length; i++)
+        out += Math.random() < frame / 60 ? finalText[i] : chars[Math.floor(Math.random() * chars.length)];
+      el.textContent = out;
+      frame++;
+      if (frame <= 60) requestAnimationFrame(tick);
+      else { el.textContent = finalText; done = true; }
+    })();
+  }
+  REDUCED ? (el.textContent = finalText, done = true) : scramble();
+  el.style.cursor = 'pointer';
+  el.addEventListener('click', () => { if (done) { done = false; scramble(); } });
+})();
+
+/* ══ Card tilt (desktop only) ══ */
+function attachTilt(card) {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--tilt-x', (((e.clientY - r.top) / r.height - .5) * -5).toFixed(2) + 'deg');
+    card.style.setProperty('--tilt-y', (((e.clientX - r.left) / r.width - .5) * 5).toFixed(2) + 'deg');
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.setProperty('--tilt-x', '0deg');
+    card.style.setProperty('--tilt-y', '0deg');
+  });
+}
+if (matchMedia('(hover: hover) and (pointer: fine)').matches && !REDUCED) {
+  const obs = new MutationObserver(muts => muts.forEach(m =>
+    m.addedNodes.forEach(n => n.nodeType === 1 && n.classList?.contains('link-card') && attachTilt(n))));
+  obs.observe(document.body, { childList: true, subtree: true });
+}
+
+/* ══ Background auto-detect ══ */
+const bgExts = ['gif', 'png', 'jpg', 'jpeg', 'webp', 'mp4'];
+(function tryBg(i) {
+  if (i >= bgExts.length) return;
+  const ext = bgExts[i];
+
+  if (ext === 'mp4') {
+    const v = document.createElement('video');
+    v.src = 'images/bg.mp4';
+    v.loop = true;
+    v.playsInline = true;
+    v.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.35;z-index:-1;pointer-events:none;';
+    v.disablePictureInPicture = true;
+    v.setAttribute('disablepictureinpicture', '');
+    document.body.prepend(v);
+    const s = document.createElement('style');
+    s.textContent = 'body::before { display: none; }';
+    document.head.appendChild(s);
+
+    /* autoplay with sound, fall back to muted */
+    v.muted = false;
+    v.volume = 0.4;
+    v.play().catch(() => { v.muted = true; v.play(); });
+
+    /* media bar */
+    const bar = document.createElement('div');
+    bar.id = 'media-bar';
+    bar.innerHTML = `
+      <button id="mb-playpause" title="Play/Pause" aria-label="Play or pause background video">
+        <i class="fas fa-pause"></i>
+      </button>
+      <div id="mb-controls">
+        <i class="fas fa-volume-up" aria-hidden="true"></i>
+        <input id="mb-volume" type="range" min="0" max="1" step="0.01" value="0.4" aria-label="Background volume">
+      </div>`;
+    document.body.appendChild(bar);
+
+    const btn = $('mb-playpause');
+    const vol = $('mb-volume');
+    btn.addEventListener('click', () => {
+      if (v.paused) { v.play(); btn.innerHTML = '<i class="fas fa-pause"></i>'; }
+      else { v.pause(); btn.innerHTML = '<i class="fas fa-play"></i>'; }
+    });
+    vol.addEventListener('input', () => {
+      v.volume = vol.value;
+      v.muted = vol.value == 0;
+    });
+    v.addEventListener('volumechange', () => {
+      if (!$('mb-volume')) return;
+      $('mb-volume').value = v.muted ? 0 : v.volume;
+    });
+  } else {
+    const img = new Image();
+    img.src = `images/bg.${ext}`;
+    img.onload = () => {
+      document.documentElement.style.setProperty('--bg-url', `url('images/bg.${ext}')`);
+      const s = document.createElement('style');
+      s.textContent = `body::before { background-image: var(--bg-url) !important; }`;
+      document.head.appendChild(s);
+    };
+    img.onerror = () => tryBg(i + 1);
+  }
+})(0);
+
+/* ══ Data ══ */
+fetch('socials.txt').then(r => r.text()).then(t => {
+  const c = $('social-icons'), lines = t.split('\n').map(l => l.trim()).filter(Boolean);
+  for (let i = 0; i < lines.length; i += 3) {
+    const a = document.createElement('a');
+    a.href = lines[i + 1];
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.title = lines[i];
+    a.setAttribute('aria-label', lines[i]);
+    a.innerHTML = `<i class="${lines[i + 2]}"></i>`;
+    c.appendChild(a);
+  }
+}).catch(() => {});
+
+fetch('info.txt').then(r => r.text()).then(t => {
+  const c = $('info-list'), loc = $('location'), lines = t.split('\n');
+  let idx = 0;
+  for (let i = 0; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const title = clean(lines[i]), content = clean(lines[i + 1] || '');
+    i++;
+    if (!title) continue;
+
+    if (title.startsWith('📍')) {
+      const span = document.createElement('span');
+      span.className = 'location-text';
+      span.innerHTML = `<svg class="loc-pin" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>${esc(title.replace('📍', '').trim())}`;
+      loc.appendChild(span);
+      continue;
+    }
+
+    const d = document.createElement('div');
+    d.className = 'link-card';
+    d.style.setProperty('--i', idx++);
+    d.innerHTML = `<strong>${esc(title)}</strong>${(content && content !== '{0}') ? '<br><span>' + esc(content) + '</span>' : ''}`;
+    c.appendChild(d);
+  }
+}).catch(() => {});
+
+fetch('cards.txt').then(r => r.text()).then(t => {
+  const c = $('link-list'), lines = t.split('\n').map(l => l.trim());
+  let idx = 0;
+  for (let i = 0; i < lines.length; i++) {
+    if (!lines[i]) continue;
+    const title = clean(lines[i]); i++;
+    const url = clean(lines[i]); i++;
+    const desc = clean(lines[i] || ''); i++;
+    if (!title || !url) continue;
+
+    const a = document.createElement('a');
+    a.className = 'link-card';
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.style.setProperty('--i', idx++);
+    a.innerHTML = `<span class="card-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>` +
+      `<strong>${esc(title)}</strong>` +
+      `${(desc && desc !== '{0}') ? '<br><span>' + esc(desc) + '</span>' : ''}`;
+    c.appendChild(a);
+  }
+}).catch(() => {});
+</script>
+
+</body>
+</html>

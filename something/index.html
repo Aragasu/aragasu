@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>something</title>
+    <meta name="description" content="A page about doing something. No blinking.">
+    <meta name="theme-color" content="#0d0f0c">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0f0c;
+            --text: #e6ede4;
+            --dim: rgba(230, 237, 228, .4);
+            --faint: rgba(230, 237, 228, .14);
+            --green: #4ade80;
+            --red: #f87171;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            user-select: none;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        /* subtle arena floor glow */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 60% 50% at 50% 100%, rgba(74, 222, 128, .07), transparent 65%);
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            text-align: center;
+            padding: 2rem;
+            animation: settle .8s cubic-bezier(.16, 1, .3, 1) both;
+        }
+
+        @keyframes settle {
+            from { opacity: 0; transform: scale(.97); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        .kicker {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .68rem;
+            letter-spacing: .35em;
+            text-transform: uppercase;
+            color: var(--faint);
+            margin-bottom: 1.6rem;
+        }
+
+        h1 {
+            font-size: clamp(1.3rem, 4vw, 2rem);
+            font-weight: 400;
+            letter-spacing: .02em;
+            color: var(--dim);
+        }
+
+        #timer {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: clamp(2.8rem, 10vw, 5.5rem);
+            letter-spacing: -.02em;
+            margin-top: .4rem;
+            font-variant-numeric: tabular-nums;
+            transition: color .3s ease, text-shadow .3s ease;
+        }
+        .hot  #timer { color: var(--green); text-shadow: 0 0 45px rgba(74, 222, 128, .35); }
+        .cold #timer { color: var(--red);   text-shadow: 0 0 45px rgba(248, 113, 113, .30); }
+
+        #state {
+            height: 1.5em;
+            margin-top: 1.4rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .78rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--dim);
+        }
+
+        .record {
+            position: fixed;
+            bottom: 1.4rem;
+            left: 0; right: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .68rem;
+            letter-spacing: .12em;
+            color: var(--faint);
+        }
+        .record b { color: var(--dim); font-weight: 500; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="box">
+    <div class="kicker">do not stop moving</div>
+    <h1>you've done something for</h1>
+    <span id="timer">0.0s</span>
+    <p id="state">prove it.</p>
+</div>
+
+<p class="record" id="record">personal record — <b>0.0s</b></p>
+
+<script>
+"use strict";
+
+const timerEl  = document.getElementById('timer');
+const stateEl  = document.getElementById('state');
+const boxEl    = document.getElementById('box');
+const recordEl = document.getElementById('record');
+
+let timeActive = 0;          /* tenths of a second */
+let activityInterval = null;
+let idleTimeout = null;
+
+const IDLE_THRESHOLD = 800;  /* ms — blink and you lose */
+
+const STATES = {
+    go:    'go.',
+    run:   'keep going.',
+    panic: 'DON\'T STOP.',
+    dead:  'too slow.'
+};
+
+function fmt(tenths) {
+    const s = tenths / 10;
+    if (s < 60) return `${s.toFixed(1)}s`;
+    const m = Math.floor(s / 60);
+    return `${m}m ${(s % 60).toFixed(1)}s`;
+}
+
+/* ── record (persists) ── */
+let best = Number(localStorage.getItem('something-record') || 0);
+paintRecord();
+
+function paintRecord() {
+    recordEl.innerHTML = `personal record — <b>${fmt(best)}</b>`;
+}
+
+function setState(text) { stateEl.textContent = text; }
+
+/* ── the something ── */
+function userIsActive() {
+    boxEl.classList.remove('cold');
+
+    if (!activityInterval) {
+        activityInterval = setInterval(() => {
+            if (document.hidden) return;   /* tab hidden = not doing something */
+            timeActive++;
+            timerEl.textContent = fmt(timeActive);
+            document.title = `something · ${fmt(timeActive)}`;
+
+            if (timeActive > best) {
+                best = timeActive;
+                localStorage.setItem('something-record', best);
+                paintRecord();
+            }
+
+            if (timeActive === 50) setState(STATES.panic);       /* 5s — tension rises */
+            else if (timeActive === 300) setState(STATES.run);   /* 30s — flow state */
+        }, 100);
+    }
+
+    clearTimeout(idleTimeout);
+    idleTimeout = setTimeout(resetGame, IDLE_THRESHOLD);
+}
+
+function resetGame() {
+    clearInterval(activityInterval);
+    activityInterval = null;
+    timeActive = 0;
+    timerEl.textContent = '0.0s';
+    document.title = 'something';
+    boxEl.classList.add('cold');
+    setState(STATES.dead);
+    setTimeout(() => { boxEl.classList.remove('cold'); setState(STATES.go); }, 900);
+}
+
+window.addEventListener('keydown', userIsActive);
+window.addEventListener('mousemove', userIsActive);
+window.addEventListener('mousedown', userIsActive);
+window.addEventListener('wheel', userIsActive);
+window.addEventListener('touchstart', userIsActive);
+window.addEventListener('touchmove', userIsActive);
+
+/* initial state */
+setState(STATES.go);
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>something to look at</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        iframe {
+            width: 80%;
+            height: 80%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="ytplayer"
+        src="https://www.youtube.com/embed/WIRK_pGdIdA?autoplay=1&controls=1&rel=0&mute=1&enablejsapi=1"
+        allow="autoplay; encrypted-media" 
+        allowfullscreen>
+    </iframe>
+
+    <script>
+        // Nach 3 Sekunden den Ton aktivieren
+        function unmuteVideo() {
+            const player = document.getElementById('ytplayer');
+            // Sende PostMessage an den YouTube-Player
+            player.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+        }
+
+        setTimeout(unmuteVideo, 1000); // 3 Sekunden warten
+    </script>
+</body>
+</html>

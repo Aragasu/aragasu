@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>aragasu.xyz — robin from germany</title>
+  <meta name="description" content="Robin – developer from Germany. Building Discord bots, web apps, and Roblox projects with Node.js and JavaScript.">
+  <meta name="author" content="Robin">
+  <meta name="theme-color" content="#050008" id="meta-theme-color">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="aragasu.xyz – Robin, Developer">
+  <meta property="og:description" content="Developer from Germany. Node.js, Discord bots, Roblox, web technologies.">
+  <meta property="og:url" content="https://aragasu.xyz">
+  <meta property="og:type" content="profile">
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Robin",
+    "alternateName": "aragasu",
+    "url": "https://aragasu.xyz",
+    "jobTitle": "Developer",
+    "description": "Developer, Gamer and Speedrunner from Germany. Specializes in Node.js, Discord bots, Roblox scripting, and web development.",
+    "knowsAbout": ["Node.js", "JavaScript", "Discord bots", "Roblox", "Lua", "Web Development"],
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "DE"
+    },
+    "sameAs": [
+      "https://github.com/Aragasu",
+      "https://www.nexusmods.com/profile/Aragasu",
+      "https://addons.mozilla.org/de/firefox/user/19804724/",
+      "https://www.speedrun.com/users/Aragasu",
+      "https://guns.lol/aragasu",
+      "https://steamcommunity.com/id/aragasu/",
+      "https://discord.com/users/873234979239383040"
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="images/avatar.svg">
+</head>
+<body data-theme="default">
+
+<!-- ambient background layers -->
+<canvas id="star-canvas" aria-hidden="true"></canvas>
+<canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+<!-- ══ PAGES DRAWER (right) ══ -->
+<button class="drawer-toggle right-toggle" id="pages-toggle" aria-label="Open pages menu" aria-expanded="false" aria-controls="pages-drawer">
+  <span></span><span></span><span></span>
+</button>
+<div class="drawer-overlay" id="pages-overlay"></div>
+<aside class="drawer drawer-right" id="pages-drawer" aria-hidden="true" aria-label="Pages">
+  <div class="drawer-header">
+    <span>pages</span>
+    <button class="drawer-close" id="pages-close" aria-label="Close pages menu">✕</button>
+  </div>
+  <div class="drawer-content" id="pages-list"></div>
+</aside>
+
+<!-- ══ THEME DRAWER (left) ══ -->
+<button class="drawer-toggle left-toggle" id="theme-toggle" aria-label="Open theme menu" aria-expanded="false" aria-controls="theme-drawer">
+  <i class="fa-solid fa-palette"></i>
+</button>
+<aside class="drawer drawer-left" id="theme-drawer" aria-hidden="true" aria-label="Themes">
+  <div class="drawer-header">
+    <span>theme</span>
+    <button class="drawer-close" id="theme-close" aria-label="Close theme menu">✕</button>
+  </div>
+  <div class="drawer-content">
+    <p class="theme-coming-soon">more themes coming soon...</p>
+    <div class="theme-options" id="theme-options">
+      <button class="theme-btn active" data-theme="default">
+        <span class="theme-preview" style="background: linear-gradient(135deg, #a044ff, #6a11cb)"></span>
+        <span>default</span>
+      </button>
+      <button class="theme-btn" data-theme="discord">
+        <span class="theme-preview" style="background: linear-gradient(135deg, #5865f2, #4752c4)"></span>
+        <span>discord</span>
+      </button>
+      <button class="theme-btn" data-theme="vscode">
+        <span class="theme-preview" style="background: linear-gradient(135deg, #007acc, #1e1e1e)"></span>
+        <span>vscode</span>
+      </button>
+      <button class="theme-btn" data-theme="curl">
+        <span class="theme-preview" style="background: linear-gradient(135deg, #c68efa, #0a0009)"></span>
+        <span>curl</span>
+      </button>
+      <button class="theme-btn" data-theme="steam">
+        <span class="theme-preview" style="background: linear-gradient(135deg, #66c0f4, #1b2838)"></span>
+        <span>steam</span>
+      </button>
+      <button class="theme-btn" data-theme="mc-overworld">
+        <span class="theme-preview" style="background: linear-gradient(135deg, #5dbb63, #3d7a40)"></span>
+        <span>minecraft overworld</span>
+      </button>
+      <button class="theme-btn" data-theme="mc-nether">
+        <span class="theme-preview" style="background: linear-gradient(135deg, #ff6a00, #c43b00)"></span>
+        <span>minecraft nether</span>
+      </button>
+      <button class="theme-btn" data-theme="mc-end">
+        <span class="theme-preview" style="background: linear-gradient(135deg, #c87dff, #8a2be2)"></span>
+        <span>minecraft end</span>
+      </button>
+      <button class="theme-btn" data-theme="aero">
+        <span class="theme-preview" style="background: linear-gradient(135deg, #00aaff, #0077cc)"></span>
+        <span>frutiger aero</span>
+      </button>
+      <button class="theme-btn" data-theme="exit">
+        <span class="theme-preview" style="background: linear-gradient(135deg, #ff0000, #cc0000)"></span>
+        <span>exit schild zeigt gerade aus</span>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<main class="container">
+  <div class="content-wrapper">
+
+    <!-- Avatar -->
+    <div class="avatar-wrapper fade-in" id="avatar-wrapper" title="you found nothing... yet">
+      <div class="avatar">
+        <img src="images/avatar.svg" alt="Aragasu's avatar" id="avatar-img">
+      </div>
+    </div>
+
+    <h1 id="scramble-text" class="fade-in" data-text="aragasu">aragasu</h1>
+    <p class="pronouns fade-in">he/him · germany</p>
+
+    <div class="social-icons fade-in" id="social-icons" aria-label="Social links"></div>
+
+    <!-- ══ DISCORD PROFILE CARD ══ -->
+    <a class="dc-card fade-in" id="dc-card" href="https://discord.com/users/873234979239383040" target="_blank" rel="noopener" style="display:none; opacity:0; transform:translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease;">
+
+      <!-- Banner -->
+      <div class="dc-banner" id="dc-banner">
+        <div class="dc-banner-overlay"></div>
+      </div>
+
+      <!-- Avatar row -->
+      <div class="dc-avatar-row">
+        <div class="dc-avatar-wrap">
+          <img class="dc-avatar" id="dc-avatar" src="" alt="">
+          <img class="dc-decoration" id="dc-decoration" src="" alt="" style="display:none;">
+          <span class="dc-status-dot" id="dc-status-dot"></span>
+        </div>
+        <!-- Badges float top-right -->
+        <div class="dc-badges" id="dc-badges"></div>
+      </div>
+
+      <!-- Profile body -->
+      <div class="dc-profile-body">
+
+        <!-- Name + tag -->
+        <div class="dc-name-row">
+          <span class="dc-displayname" id="dc-displayname"></span>
+          <span class="dc-server-tag" id="dc-server-tag" style="display:none;">
+            <img class="dc-server-tag-badge" id="dc-server-tag-badge" src="" alt="" style="display:none;">
+            <span id="dc-server-tag-text"></span>
+          </span>
+        </div>
+
+        <!-- Username -->
+        <span class="dc-username" id="dc-username"></span>
+
+        <!-- Divider -->
+        <div class="dc-divider"></div>
+
+        <!-- About / status area — we use for activity -->
+        <div class="dc-section" id="dc-activity-section" style="display:none;">
+          <div class="dc-section-label" id="dc-activity-label">PLAYING A GAME</div>
+          <div class="dc-activity-inner">
+            <img class="dc-activity-icon" id="dc-activity-icon" src="" alt="" style="display:none;">
+            <div class="dc-activity-details">
+              <span class="dc-activity-name" id="dc-activity-name"></span>
+              <span class="dc-activity-sub"  id="dc-activity-sub"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spotify -->
+        <div class="dc-section dc-spotify" id="dc-spotify" style="display:none;">
+          <div class="dc-section-label">LISTENING TO SPOTIFY</div>
+          <div class="dc-spotify-inner">
+            <img class="dc-spotify-art" id="dc-spotify-art" src="" alt="">
+            <div class="dc-spotify-details">
+              <span class="sp-song"   id="sp-song"></span>
+              <span class="sp-artist" id="sp-artist"></span>
+              <div class="dc-spotify-bar-wrap">
+                <div class="dc-spotify-bar" id="dc-spotify-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </a>
+
+    <!-- Info cards -->
+    <div class="list-label fade-in">about</div>
+    <div class="info-list fade-in" id="info-list"></div>
+
+    <!-- IG banner + link cards -->
+    <div class="list-label fade-in">links &amp; projects</div>
+    <div class="link-list fade-in" id="link-list">
+      <div id="ig-banner-wrap" class="link-card fade-in">
+        <div id="my-instant-gaming-banner"></div>
+      </div>
+    </div>
+
+    <footer class="site-footer fade-in">
+      <span>© <span id="footer-year">2026</span> aragasu — built with <span class="heart">♥</span> &amp; too much caffeine</span>
+      <span class="footer-hint">psst: ↑↑↓↓←→←→BA</span>
+    </footer>
+
+  </div>
+</main>
+
+<div id="live-clock" aria-hidden="true"></div>
+
+<noscript>
+  <p style="position:fixed;inset:auto 0 0 0;text-align:center;padding:1rem;color:#fff;background:#1a1523;">
+    This site needs JavaScript for the fancy stuff — the content lives in socials.txt / cards.txt anyway.
+  </p>
+</noscript>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   aragasu.xyz — main script
+   sections: helpers · reveal · scramble · starfield · drawers ·
+             theme · clock · tilt · data · lanyard · easter eggs
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Helpers ── */
+const $ = id => document.getElementById(id);
+const clean = s => (s && s.trim().toLowerCase() === 'null') ? '' : s.trim();
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const CAN_HOVER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+$('footer-year').textContent = new Date().getFullYear();
+
+/* ── Reveal on load ── */
+function reveal() {
+  document.querySelectorAll('.fade-in').forEach((el, i) =>
+    setTimeout(() => el.classList.add('visible'), REDUCED ? 0 : 100 + i * 90));
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', reveal);
+} else {
+  reveal();
+}
+
+/* ── Scramble ── */
+(function () {
+  const titleEl = $('scramble-text');
+  const finalText = titleEl.dataset.text || titleEl.textContent;
+  const chars = 'xyz●♤♧#$%&';
+  let done = false;
+
+  function scramble() {
+    if (done) return;
+    let frame = 0, out = '';
+    (function tick() {
+      out = '';
+      for (let i = 0; i < finalText.length; i++)
+        out += Math.random() < frame / 60 ? finalText[i] : chars[Math.floor(Math.random() * chars.length)];
+      titleEl.textContent = out;
+      frame++;
+      if (frame <= 60) requestAnimationFrame(tick);
+      else { titleEl.textContent = finalText; done = true; }
+    })();
+  }
+  REDUCED ? (titleEl.textContent = finalText, done = true) : scramble();
+
+  /* click the name to replay */
+  titleEl.style.cursor = 'pointer';
+  titleEl.addEventListener('click', () => { if (done) { done = false; scramble(); } });
+})();
+
+/* ── Starfield ── */
+(function () {
+  const canvas = $('star-canvas'), ctx = canvas.getContext('2d');
+  let stars = [], w = 0, h = 0, raf = null;
+  const accent = () => (getComputedStyle(document.body).getPropertyValue('--accent') || '#a044ff').trim();
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    const count = Math.min(180, Math.floor(w * h / 9000));
+    stars = Array.from({ length: count }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: Math.random() * 1.4 + 0.3,
+      tw: Math.random() * Math.PI * 2,          /* twinkle phase */
+      ts: 0.008 + Math.random() * 0.02,         /* twinkle speed */
+      vy: 0.06 + Math.random() * 0.18           /* drift speed */
+    }));
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    const col = accent();
+    for (const s of stars) {
+      s.tw += s.ts;
+      s.y += s.vy;
+      if (s.y > h + 2) { s.y = -2; s.x = Math.random() * w; }
+      const a = 0.25 + Math.abs(Math.sin(s.tw)) * 0.55;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    raf = requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  if (REDUCED) { draw(); cancelAnimationFrame(raf); ctx.globalAlpha = .5; }
+  else draw();
+})();
+
+/* ── Drawers (shared logic) ── */
+function initDrawer(toggleId, drawerId, overlayId, closeId) {
+  const toggle = $(toggleId), drawer = $(drawerId),
+        overlay = overlayId ? $(overlayId) : null, close = $(closeId);
+
+  function setOpen(open) {
+    drawer.classList.toggle('open', open);
+    if (overlay) overlay.classList.toggle('active', open);
+    toggle?.setAttribute('aria-expanded', String(open));
+    drawer.setAttribute('aria-hidden', String(!open));
+    document.body.classList.toggle('drawer-open', open);
+  }
+  toggle?.addEventListener('click', () => setOpen(!drawer.classList.contains('open')));
+  close?.addEventListener('click', () => setOpen(false));
+  overlay?.addEventListener('click', () => setOpen(false));
+  return setOpen;
+}
+const setPagesDrawer = initDrawer('pages-toggle', 'pages-drawer', 'pages-overlay', 'pages-close');
+const setThemeDrawer = initDrawer('theme-toggle', 'theme-drawer', null, 'theme-close');
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { setPagesDrawer(false); setThemeDrawer(false); }
+  if (e.target?.closest?.('input, textarea, select')) return;
+  if (e.key.toLowerCase() === 'p' && !e.ctrlKey && !e.metaKey && !e.altKey) setPagesDrawer(true);
+  if (e.key.toLowerCase() === 't' && !e.ctrlKey && !e.metaKey && !e.altKey) setThemeDrawer(true);
+});
+
+/* ── Theme switcher ── */
+const themeButtons = document.querySelectorAll('.theme-btn');
+function applyTheme(theme, save = true) {
+  document.body.setAttribute('data-theme', theme);
+  themeButtons.forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
+  if (save) localStorage.setItem('theme', theme);
+  requestAnimationFrame(() => {
+    const bg = getComputedStyle(document.body).getPropertyValue('--bg').trim();
+    $('meta-theme-color')?.setAttribute('content', bg || '#050008');
+  });
+}
+themeButtons.forEach(btn => btn.addEventListener('click', () => applyTheme(btn.dataset.theme)));
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme && document.querySelector(`.theme-btn[data-theme="${savedTheme}"]`)) {
+  applyTheme(savedTheme, false);
+}
+
+/* ── Live Clock ── */
+function updateClock() {
+  $('live-clock').textContent = new Date().toLocaleTimeString('de-DE', {
+    timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+/* ── Card tilt (desktop only) ── */  if (CAN_HOVER && !REDUCED) {
+  document.querySelectorAll('.link-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const rx = ((e.clientY - r.top) / r.height - 0.5) * -5;
+      const ry = ((e.clientX - r.left) / r.width - 0.5) * 5;
+      card.style.setProperty('--tilt-x', rx.toFixed(2) + 'deg');
+      card.style.setProperty('--tilt-y', ry.toFixed(2) + 'deg');
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.setProperty('--tilt-x', '0deg');
+      card.style.setProperty('--tilt-y', '0deg');
+    });
+  });
+}
+
+/* ── Data files ──
+   Each file is fetched live so you can edit content without touching HTML.
+   If a file is missing/unreachable, the embedded defaults below kick in. */
+const DEFAULT_DATA = {
+  socials: `GitHub\nhttps://github.com/Aragasu\nfab fa-github\nDiscord\nhttps://discord.com/users/873234979239383040\nfab fa-discord\nSteam\nhttps://steamcommunity.com/id/aragasu/\nfab fa-steam\nguns.lol\nhttps://guns.lol/aragasu\nfas fa-globe`,
+  info: `Hey there!\nOn this page you can find all of my projects, socials and other stuff.`,
+  cards: `Foldermap\nhttps://aragasu.github.io/FolderMap/\nnull\nPortfolio\n/portfolio\nnull\nWant a website like this?\nhttps://discord.com/users/873234979239383040\nContact me on discord`,
+  pages: `Home\n#\nThis Page\n\nInstant Gaming\n/instantgaming\nAccess exclusive gaming deals via my affiliate link\n\nLegacy Version\n/legacy\nTake a look back at the original design of this site\n\nCurl\n/curl\nTerminal styled variant of this site\n\nNothing\n/nothing\nA browser-based recreation of the idle game "Nothing".\n\nSomething\n/something\nA browser-based recreation of the game "Something".\n\nImage2Map\n/image2map\nCommand generator for the /image2map Fabric mod command\n\nKey-Value Finder\n/valuefinder\nExtract the value of any key from logs and env dumps`
+};
+
+function loadData(key, handler) {
+  return fetch(key + '.txt')
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .catch(() => DEFAULT_DATA[key]);
+}
+
+loadData('socials').then(t => {
+  const c = $('social-icons'), lines = t.split('\n').map(l => l.trim()).filter(Boolean);
+  for (let i = 0; i < lines.length; i += 3) {
+    const a = document.createElement('a');
+    a.href = lines[i + 1];
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.title = lines[i];
+    a.setAttribute('aria-label', lines[i]);
+    a.innerHTML = `<i class="${lines[i + 2]}"></i>`;
+    c.appendChild(a);
+  }
+}).catch(() => {});
+
+loadData('info').then(t => {
+  const c = $('info-list'), lines = t.split('\n');
+  let idx = 0;
+  for (let i = 0; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const title = clean(lines[i]), content = clean(lines[i + 1] || '');
+    i++;
+    if (!title) continue;
+    const d = document.createElement('div');
+    d.className = 'link-card';
+    d.style.setProperty('--i', idx++);
+    d.innerHTML = `<strong>${esc(title)}</strong>${(content && content !== '{0}') ? '<br><span>' + esc(content) + '</span>' : ''}`;
+    c.appendChild(d);
+  }
+}).catch(() => {});
+
+loadData('cards').then(t => {
+  const c = $('link-list'), ig = $('ig-banner-wrap'), lines = t.split('\n').map(l => l.trim());
+  let idx = 1;
+  for (let i = 0; i < lines.length; i++) {
+    if (!lines[i]) continue;
+    const title = clean(lines[i]); i++;
+    const url = clean(lines[i]); i++;
+    const desc = clean(lines[i] || ''); i++;
+    if (!title || !url) continue;
+    const a = document.createElement('a');
+    a.className = 'link-card';
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.style.setProperty('--i', idx++);
+    a.innerHTML = `<span class="card-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>` +
+      `<strong>${esc(title)}</strong>` +
+      `${(desc && desc !== '{0}') ? '<br><span>' + esc(desc) + '</span>' : ''}`;
+    c.insertBefore(a, ig);
+    if (CAN_HOVER && !REDUCED) attachTilt(a);
+  }
+}).catch(() => {});
+
+/* late-created cards need tilt too */
+function attachTilt(card) {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const rx = ((e.clientY - r.top) / r.height - 0.5) * -5;
+    const ry = ((e.clientX - r.left) / r.width - 0.5) * 5;
+    card.style.setProperty('--tilt-x', rx.toFixed(2) + 'deg');
+    card.style.setProperty('--tilt-y', ry.toFixed(2) + 'deg');
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.setProperty('--tilt-x', '0deg');
+    card.style.setProperty('--tilt-y', '0deg');
+  });
+}
+
+/* ── Pages drawer content ── */
+loadData('pages').then(t => {
+  const c = $('pages-list'), lines = t.split('\n').map(l => l.trim());
+  let any = false;
+  for (let i = 0; i < lines.length; i++) {
+    if (!lines[i]) continue;
+    const name = clean(lines[i]); i++;
+    const url = clean(lines[i] || ''); i++;
+    const desc = clean(lines[i] || ''); i++;
+    if (!name || !url) continue;
+    any = true;
+    const a = document.createElement('a');
+    a.className = 'drawer-link';
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.innerHTML = `<span class="dl-name">${esc(name)}</span>${desc ? `<span class="dl-desc">${esc(desc)}</span>` : ''}`;
+    c.appendChild(a);
+  }
+  if (!any) {
+    const p = document.createElement('p');
+    p.className = 'drawer-empty';
+    p.textContent = 'no pages yet';
+    c.appendChild(p);
+  }
+}).catch(() => {});
+
+/* ════════════════════════════════════════════════════════════
+   DISCORD CARD — Lanyard WebSocket
+   ════════════════════════════════════════════════════════════ */
+const DISCORD_ID = '873234979239383040';
+const CDN = 'https://cdn.discordapp.com';
+const STATUS_COLOR = { online: '#3ba55d', idle: '#faa61a', dnd: '#ed4245', offline: '#747f8d' };
+const STATUS_LABEL = { online: 'Online', idle: 'Idle', dnd: 'Do Not Disturb', offline: 'Offline' };
+const ACTIVITY_VERB = { 0: 'PLAYING A GAME', 1: 'LIVE ON TWITCH', 2: 'LISTENING TO SPOTIFY', 3: 'WATCHING', 5: 'COMPETING IN' };
+
+const BADGE_CDN = 'https://cdn.discordapp.com/badge-icons/';
+const FLAGS_MAP = [
+  [1 << 0,  BADGE_CDN + '5e74e9b61934fc1f67c2da70d0aa1031.png', 'Discord Staff'],
+  [1 << 1,  BADGE_CDN + '3f9748e53446a137a052f3454e2de41e.png', 'Partnered Server Owner'],
+  [1 << 2,  BADGE_CDN + 'bf01d1073931f921909045f3a39fd264.png', 'HypeSquad Events'],
+  [1 << 3,  BADGE_CDN + '2717692c7dca7289b35297368a940dd0.png', 'Bug Hunter'],
+  [1 << 6,  BADGE_CDN + '8a88d63823d8a71cd5e390baa45efa02.png', 'HypeSquad Bravery'],
+  [1 << 7,  BADGE_CDN + '011940fd013082d85d96680709bab45e.png', 'HypeSquad Brilliance'],
+  [1 << 8,  BADGE_CDN + '3aa41de486fa12454c3761e8e223442e.png', 'HypeSquad Balance'],
+  [1 << 9,  BADGE_CDN + '7060786766c9c840eb3019e725d2b358.png', 'Early Supporter'],
+  [1 << 14, BADGE_CDN + '848f79194d4be5ff5f81505cbd0ce1e6.png', 'Bug Hunter Lv2'],
+  [1 << 17, BADGE_CDN + '6df5892e0f35b051f8b61eace34f4967.png', 'Early Verified Bot Dev'],
+  [1 << 18, BADGE_CDN + 'fee1624003e2fee35cb398e125dc479b.png', 'Moderator Alumni'],
+  [1 << 22, BADGE_CDN + '6bdc42827a38498929a4920da12695d9.png', 'Active Developer'],
+];
+
+let spInterval = null, spStart = 0, spEnd = 0;
+function updateSpBar() {
+  const bar = $('dc-spotify-bar');
+  if (!bar || !spEnd) return;
+  const pct = Math.min(100, ((Date.now() - spStart) / (spEnd - spStart)) * 100);
+  bar.style.width = pct + '%';
+  if (pct >= 100) clearInterval(spInterval);
+}
+
+function renderCard(data) {
+  const u = data.discord_user;
+  const status = data.discord_status || 'offline';
+  const card = $('dc-card');
+
+  /* Banner */
+  const bannerEl = $('dc-banner');
+  if (u.banner) {
+    const ext = u.banner.startsWith('a_') ? 'gif' : 'png';
+    bannerEl.style.backgroundImage = `url(${CDN}/banners/${u.id}/${u.banner}.${ext}?size=600)`;
+    bannerEl.style.backgroundColor = 'transparent';
+  } else {
+    bannerEl.style.backgroundImage = 'none';
+    bannerEl.style.backgroundColor = u.banner_color || '#1e1535';
+  }
+
+  /* Avatar */
+  const avEl = $('dc-avatar');
+  if (u.avatar) {
+    const ext = u.avatar.startsWith('a_') ? 'gif' : 'png';
+    avEl.src = `${CDN}/avatars/${u.id}/${u.avatar}.${ext}?size=160`;
+  } else {
+    avEl.src = `${CDN}/embed/avatars/${Number(BigInt(u.id) >> 22n) % 6}.png`;
+  }
+
+  /* Decoration */
+  const decEl = $('dc-decoration');
+  if (u.avatar_decoration_data?.asset) {
+    decEl.src = `${CDN}/avatar-decoration-presets/${u.avatar_decoration_data.asset}.png?size=160&passthrough=true`;
+    decEl.style.display = 'block';
+  } else decEl.style.display = 'none';
+
+  /* Status dot */
+  const dot = $('dc-status-dot');
+  dot.style.background = STATUS_COLOR[status];
+  dot.style.boxShadow = `0 0 0 3px var(--dc-bg, #1a1523), 0 0 8px ${STATUS_COLOR[status]}99`;
+  dot.title = STATUS_LABEL[status];
+
+  /* Names */
+  $('dc-displayname').textContent = u.global_name || u.username;
+  $('dc-username').textContent = '@' + u.username;
+
+  /* Badges */
+  const bc = $('dc-badges'); bc.innerHTML = '';
+  if (u.avatar && u.avatar.startsWith('a_')) {
+    const img = document.createElement('img');
+    img.src = BADGE_CDN + '2ba85e8026a8614b640c2837bcdfe21b.png'; img.alt = 'Nitro'; img.title = 'Nitro'; img.className = 'dc-badge';
+    bc.appendChild(img);
+  }
+  const flags = u.public_flags || 0;
+  for (const [flag, url, title] of FLAGS_MAP) {
+    if (flags & flag) {
+      const img = document.createElement('img');
+      img.src = url; img.alt = title; img.title = title; img.className = 'dc-badge';
+      bc.appendChild(img);
+    }
+  }
+
+  /* Server tag */
+  const tagEl = $('dc-server-tag'), tagBadge = $('dc-server-tag-badge'), tagText = $('dc-server-tag-text');
+  const pg = u.primary_guild;
+  if (pg?.identity_enabled && pg.tag) {
+    tagText.textContent = pg.tag;
+    if (pg.badge && pg.identity_guild_id) {
+      tagBadge.src = `${CDN}/clan-badges/${pg.identity_guild_id}/${pg.badge}.png?size=32`;
+      tagBadge.style.display = 'inline-block';
+    } else tagBadge.style.display = 'none';
+    tagEl.style.display = 'inline-flex';
+  } else tagEl.style.display = 'none';
+
+  /* Activity / Spotify */
+  const spotifyEl = $('dc-spotify'), actSection = $('dc-activity-section');
+  clearInterval(spInterval);
+
+  if (data.listening_to_spotify && data.spotify) {
+    const sp = data.spotify;
+    spotifyEl.style.display = 'block';
+    actSection.style.display = 'none';
+    $('dc-spotify-art').src = sp.album_art_url || '';
+    $('sp-song').textContent = sp.song;
+    $('sp-artist').textContent = sp.artist;
+    spStart = sp.timestamps.start; spEnd = sp.timestamps.end;
+    updateSpBar(); spInterval = setInterval(updateSpBar, 1000);
+  } else {
+    spotifyEl.style.display = 'none';
+    const act = data.activities?.find(a => a.type !== 4);
+    if (act) {
+      actSection.style.display = 'block';
+      $('dc-activity-label').textContent = ACTIVITY_VERB[act.type] || 'PLAYING A GAME';
+      $('dc-activity-name').textContent = act.name;
+      $('dc-activity-sub').textContent = act.details || act.state || '';
+      const actIcon = $('dc-activity-icon');
+      if (act.assets?.large_image && act.application_id) {
+        const img = act.assets.large_image;
+        actIcon.src = img.startsWith('mp:external/')
+          ? 'https://media.discordapp.net/external/' + img.replace('mp:external/', '')
+          : `${CDN}/app-assets/${act.application_id}/${img}.png?size=64`;
+        actIcon.style.display = 'block';
+      } else actIcon.style.display = 'none';
+    } else actSection.style.display = 'none';
+  }
+
+  /* Show card with fade-in, then hand control back to CSS */
+  if (card.style.display === 'none' || !card.style.display) {
+    card.style.display = 'flex';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+      setTimeout(() => {
+        card.style.transition = '';
+        card.style.opacity = '';
+        card.style.transform = '';
+      }, 900);
+    }));
+  }
+}
+
+function connectLanyard() {
+  const ws = new WebSocket('wss://api.lanyard.rest/socket');
+  let hb = null;
+  ws.onmessage = e => {
+    const msg = JSON.parse(e.data);
+    if (msg.op === 1) {
+      hb = setInterval(() => ws.send(JSON.stringify({ op: 3 })), msg.d.heartbeat_interval);
+      ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_ID } }));
+    }
+    if (msg.op === 0) renderCard(msg.d);
+  };
+  ws.onclose = () => { clearInterval(hb); setTimeout(connectLanyard, 3000); };
+  ws.onerror = () => ws.close();
+}
+connectLanyard();
+
+/* ════════════════════════════════════════════════════════════
+   EASTER EGGS
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Avatar: 7 quick clicks ── */
+let clickCount = 0, clickTimer = null;
+$('avatar-wrapper').addEventListener('click', () => {
+  clickCount++; clearTimeout(clickTimer);
+  clickTimer = setTimeout(() => clickCount = 0, 1500);
+  if (clickCount >= 7) { clickCount = 0; triggerEasterEgg(); }
+});
+
+function accentPalette() {
+  const cs = getComputedStyle(document.body);
+  const accent = cs.getPropertyValue('--accent').trim() || '#a044ff';
+  const accent2 = cs.getPropertyValue('--accent-2').trim() || '#6a11cb';
+  return [accent, accent2, '#ffffff', '#f3e8ff'];
+}
+
+function triggerEasterEgg() {
+  const img = $('avatar-img');
+  if (!REDUCED) {
+    img.animate(
+      [{ transform: 'rotate(0deg) scale(1)' }, { transform: 'rotate(180deg) scale(1.1)' }, { transform: 'rotate(360deg) scale(1)' }],
+      { duration: 900, easing: 'cubic-bezier(0.25,0.46,0.45,0.94)', fill: 'forwards' }
+    ).onfinish = () => img.style.transform = '';
+  }
+  confettiBurst();
+}
+
+function confettiBurst() {
+  const canvas = $('confetti-canvas'), ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight; canvas.style.display = 'block';
+  const colors = accentPalette();
+  const pieces = Array.from({ length: 160 }, () => ({
+    x: canvas.width / 2, y: canvas.height * 0.22,
+    vx: (Math.random() - .5) * 16, vy: Math.random() * -12 - 3,
+    w: Math.random() * 8 + 3, h: Math.random() * 4 + 2,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    alpha: 1, gravity: .38, rot: Math.random() * 360, rotSpeed: (Math.random() - .5) * 10
+  }));
+  (function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    for (const p of pieces) {
+      p.vy += p.gravity; p.x += p.vx; p.y += p.vy; p.rot += p.rotSpeed; p.alpha -= .013;
+      if (p.alpha > 0) {
+        alive = true;
+        ctx.save(); ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
+        ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+    }
+    if (alive) requestAnimationFrame(draw);
+    else { canvas.style.display = 'none'; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+  })();
+}
+
+/* ── Konami code ── */
+(function () {
+  const SEQ = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let pos = 0;
+  document.addEventListener('keydown', e => {
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    pos = (key === SEQ[pos]) ? pos + 1 : (key === SEQ[0] ? 1 : 0);
+    if (pos === SEQ.length) {
+      pos = 0;
+      document.body.classList.add('party-mode');
+      confettiBurst();
+      setTimeout(() => document.body.classList.remove('party-mode'), 8000);
+    }
+  });
+})();
+</script>
+
+<script>
+  window.igBannerConfig = { lang: 'en', igr: 'aragasu', banners: ['my-instant-gaming-banner'] };
+</script>
+<script src="https://www.instant-gaming.com/api/banner/partner/loader.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key-Value Finder Pro</title>
+    <meta name="description" content="Paste logs or env dumps, extract the value of any key instantly.">
+    <meta name="theme-color" content="#1e1e2e">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #181825;
+            --bg-deep: #11111b;
+            --card: #1e1e2e;
+            --text: #cdd6f4;
+            --accent: #cba6f7;
+            --border: #414559;
+            --success: #a6e3a1;
+            --error: #f38ba8;
+            --muted: #a6adc8;
+            --btn: #313244;
+            --btn-hover: #45475a;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Space Grotesk', system-ui, sans-serif;
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--sans);
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 24px 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* ambient glow */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 55% 35% at 50% 0%, rgba(203, 166, 247, .07), transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 760px;
+            background: var(--card);
+            padding: 28px;
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(65, 69, 89, .5);
+            align-self: flex-start;
+            margin-top: 2vh;
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            color: var(--accent);
+            font-size: 24px;
+            letter-spacing: -0.01em;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            margin: 0 0 24px;
+        }
+
+        .form-group { margin-bottom: 18px; }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+            color: var(--muted);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .step-badge {
+            display: inline-grid;
+            place-items: center;
+            width: 18px;
+            height: 18px;
+            margin-right: 7px;
+            background: var(--accent);
+            color: var(--bg-deep);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-deep);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: var(--mono);
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 190px;
+            line-height: 1.55;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(203, 166, 247, .12);
+        }
+
+        textarea::placeholder, input::placeholder { color: #585b70; }
+
+        /* presets */
+        .preset-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .preset-btn {
+            background-color: var(--btn);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 6px 13px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: var(--mono);
+            transition: all 0.2s ease;
+        }
+
+        .preset-btn:hover {
+            background-color: var(--btn-hover);
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .preset-btn:active { transform: translateY(0) scale(.97); }
+
+        /* stats row */
+        .stats-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            font-family: var(--mono);
+            font-size: 12px;
+            color: #6c7086;
+        }
+        .stats-row b { color: var(--muted); font-weight: 600; }
+
+        /* result */
+        .result-wrapper { margin-top: 22px; }
+
+        .result-box {
+            padding: 16px;
+            background-color: var(--bg-deep);
+            border-left: 4px solid var(--accent);
+            border-radius: 10px;
+            min-height: 72px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            transition: border-color .25s ease, box-shadow .25s ease;
+        }
+        .result-box.found {
+            border-left-color: var(--success);
+            box-shadow: 0 0 26px rgba(166, 227, 161, .07);
+        }
+        .result-box.miss  { border-left-color: var(--error); }
+
+        .result-content { flex-grow: 1; min-width: 0; }
+
+        .result-title {
+            font-weight: 700;
+            color: var(--muted);
+            margin-bottom: 6px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+        }
+
+        .result-value {
+            font-family: var(--mono);
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 15px;
+            color: var(--success);
+            line-height: 1.5;
+        }
+
+        .no-result {
+            color: #6c7086;
+            font-style: italic;
+        }
+        .result-box.miss .result-value,
+        .result-box.miss .no-result { color: var(--error); }
+
+        .copy-btn {
+            background-color: var(--btn);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 9px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--btn-hover);
+            border-color: var(--success-color, var(--success));
+        }
+
+        .copy-btn.copied {
+            background-color: var(--success);
+            color: var(--bg-deep);
+            border-color: var(--success);
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 20px;
+            font-size: .7rem;
+            font-family: var(--mono);
+            letter-spacing: .1em;
+            color: #585b70;
+        }
+        .footer-note a { color: #7f849c; text-decoration: none; }
+        .footer-note a:hover { color: var(--accent); }
+
+        @media (max-width: 520px) {
+            .container { padding: 20px; }
+            .result-box { flex-direction: column; }
+            .copy-btn { width: 100%; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Key-Value Finder Pro</h1>
+    <p class="subtitle">paste logs or env dumps — pull the value of any key in an instant</p>
+
+    <div class="form-group">
+        <label for="rawText"><span class="step-badge">1</span>Paste your text</label>
+        <textarea id="rawText" placeholder="Paste your logs or environment variables here..." spellcheck="false"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="presetsConfig">Presets <span style="text-transform:none;font-weight:400;letter-spacing:0;">(comma separated, saved locally)</span></label>
+        <input type="text" id="presetsConfig" value="OS, Path, npm_package_name, OneDrive" placeholder="e.g. OS, Path, USERNAME" spellcheck="false">
+        <div class="preset-container" id="presetButtons"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="searchKey"><span class="step-badge">2</span>Which key are you looking for?</label>
+        <input type="text" id="searchKey" placeholder="Type a key or click a preset above..." autocomplete="off" spellcheck="false">
+        <div class="stats-row" id="statsRow"></div>
+    </div>
+
+    <div class="result-wrapper">
+        <div class="result-box" id="resultBox">
+            <div class="result-content">
+                <div class="result-title">Result</div>
+                <div id="output" class="no-result">Enter some text and a search term...</div>
+            </div>
+            <button class="copy-btn" id="copyBtn" style="display: none;">Copy</button>
+        </div>
+    </div>
+
+    <div class="footer-note">/// part of <a href="https://aragasu.xyz" target="_blank" rel="noopener">aragasu.xyz</a></div>
+</div>
+
+<script>
+    "use strict";
+
+    const rawTextEl = document.getElementById('rawText');
+    const searchKeyEl = document.getElementById('searchKey');
+    const outputEl = document.getElementById('output');
+    const copyBtn = document.getElementById('copyBtn');
+    const presetsConfig = document.getElementById('presetsConfig');
+    const presetButtonsContainer = document.getElementById('presetButtons');
+    const resultBox = document.getElementById('resultBox');
+    const statsRow = document.getElementById('statsRow');
+
+    let currentFoundValue = "";
+
+    /* ── find ── */
+    function findValue() {
+        const text = rawTextEl.value;
+        const searchKey = searchKeyEl.value.trim();
+
+        /* stats */
+        const lines = text ? text.split('\n') : [];
+        const kvLines = lines.filter(l => l.includes('=')).length;
+        statsRow.innerHTML = text
+            ? `scanned <b>${lines.length}</b> line${lines.length === 1 ? '' : 's'} · found <b>${kvLines}</b> key=value pair${kvLines === 1 ? '' : 's'}`
+            : '';
+
+        if (!text || !searchKey) {
+            outputEl.className = 'no-result';
+            outputEl.textContent = 'Enter some text and a search term...';
+            resultBox.classList.remove('found', 'miss');
+            copyBtn.style.display = 'none';
+            currentFoundValue = "";
+            return;
+        }
+
+        for (let line of lines) {
+            if (line.includes('=')) {
+                const index = line.indexOf('=');
+                const key = line.substring(0, index).trim();
+                const value = line.substring(index + 1).trim();
+
+                if (key.toLowerCase() === searchKey.toLowerCase()) {
+                    outputEl.className = 'result-value';
+                    outputEl.textContent = value;
+                    resultBox.classList.add('found');
+                    resultBox.classList.remove('miss');
+                    currentFoundValue = value;
+                    copyBtn.style.display = 'block';
+                    return;
+                }
+            }
+        }
+
+        outputEl.className = 'no-result';
+        outputEl.textContent = `Key "${searchKey}" was not found.`;
+        resultBox.classList.add('miss');
+        resultBox.classList.remove('found');
+        copyBtn.style.display = 'none';
+        currentFoundValue = "";
+    }
+
+    /* ── copy ── */
+    copyBtn.addEventListener('click', () => {
+        if (!currentFoundValue) return;
+
+        navigator.clipboard.writeText(currentFoundValue).then(() => {
+            copyBtn.textContent = 'Copied! ✓';
+            copyBtn.classList.add('copied');
+
+            setTimeout(() => {
+                copyBtn.textContent = 'Copy';
+                copyBtn.classList.remove('copied');
+            }, 1500);
+        }).catch(err => {
+            console.error('Copy failed: ', err);
+        });
+    });
+
+    /* ── presets ── */
+    function renderPresets() {
+        const configValue = presetsConfig.value;
+        localStorage.setItem('extractor_presets', configValue);
+
+        presetButtonsContainer.innerHTML = '';
+
+        const tags = configValue.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
+
+        tags.forEach(tag => {
+            const btn = document.createElement('button');
+            btn.className = 'preset-btn';
+            btn.textContent = tag;
+            btn.type = 'button';
+
+            btn.addEventListener('click', () => {
+                searchKeyEl.value = tag;
+                findValue();
+            });
+
+            presetButtonsContainer.appendChild(btn);
+        });
+    }
+
+    if (localStorage.getItem('extractor_presets')) {
+        presetsConfig.value = localStorage.getItem('extractor_presets');
+    }
+
+    rawTextEl.addEventListener('input', findValue);
+    searchKeyEl.addEventListener('input', findValue);
+    presetsConfig.addEventListener('input', renderPresets);
+
+    renderPresets();
+</script>
+
+</body>
+</html>

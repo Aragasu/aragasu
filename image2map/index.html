@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>/image2map Generator</title>
+<meta name="description" content="Command builder for the /image2map command of the Fabric map-art mod.">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg-secondary: #13131a;
+    --bg-elevated: #191922;
+    --accent: #9b87f5;
+    --accent-strong: #7c5cfc;
+    --border: #24242f;
+    --text: #e8e6f0;
+    --text-dim: #8b899a;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 20px;
+  }
+
+  /* ambient glow */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 55% 40% at 50% 0%, rgba(124, 92, 252, .10), transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .panel {
+    width: 100%;
+    max-width: 620px;
+  }
+
+  .heading { margin-bottom: 28px; }
+
+  .heading h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .heading h1 .cmd {
+    font-family: var(--mono);
+    color: var(--accent);
+  }
+
+  .heading p {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+
+  .card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .row { margin-bottom: 22px; }
+  .row:last-child { margin-bottom: 0; }
+
+  .label-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  .value-tag {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+  }
+
+  /* segmented toggle */
+  .segmented {
+    display: flex;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 3px;
+  }
+
+  .segmented button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .segmented button.active {
+    background: var(--accent-strong);
+    color: #fff;
+  }
+
+  .segmented button:not(.active):hover { color: var(--text); }
+
+  /* unit switch */
+  .unit-switch { display: flex; gap: 6px; }
+
+  .unit-switch button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .unit-switch button.active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .res-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .res-field label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+
+  input[type="number"]:focus { border-color: var(--accent); }
+
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    margin-top: 4px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    transition: transform 0.1s ease;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 11px 12px;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+
+  input[type="text"]:focus { border-color: var(--accent); }
+  input[type="text"]::placeholder { color: #4a4959; }
+
+  .hint {
+    font-size: 12px;
+    color: #55536a;
+    margin-top: 8px;
+  }
+
+  /* map grid preview */
+  .preview-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .map-grid-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 14px;
+  }
+
+  .map-grid {
+    display: grid;
+    gap: 3px;
+    max-width: 100%;
+  }
+
+  .map-cell {
+    width: 34px;
+    height: 34px;
+    border-radius: 5px;
+    background: linear-gradient(135deg, rgba(124, 92, 252, .28), rgba(124, 92, 252, .12));
+    border: 1px solid rgba(124, 92, 252, .35);
+    animation: cell-in .35s var(--ease-spring) both;
+  }
+
+  .map-cell.edge {
+    background: linear-gradient(135deg, rgba(155, 135, 245, .12), rgba(155, 135, 245, .05));
+    border-style: dashed;
+    opacity: .65;
+  }
+
+  @keyframes cell-in {
+    from { opacity: 0; transform: scale(.7); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .map-summary {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .map-summary b {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* output */
+  .output-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--accent);
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 0 32px rgba(124, 92, 252, .12);
+  }
+
+  .output-command {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--text);
+    word-break: break-all;
+    line-height: 1.5;
+  }
+
+  .output-command .kw { color: var(--accent); }
+
+  .copy-btn {
+    flex-shrink: 0;
+    background: var(--accent-strong);
+    color: #fff;
+    border: none;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+
+  .copy-btn:hover { background: var(--accent); }
+  .copy-btn:active { transform: scale(0.97); }
+  .copy-btn.copied { background: #4caf7d; }
+
+  .footer-note {
+    text-align: center;
+    margin-top: 22px;
+    font-size: .72rem;
+    font-family: var(--mono);
+    letter-spacing: .1em;
+    color: #4a4959;
+  }
+
+  .footer-note a { color: #6b6980; text-decoration: none; }
+  .footer-note a:hover { color: var(--accent); }
+
+  @media (max-width: 480px) {
+    .res-grid { grid-template-columns: 1fr; }
+    .output-card { flex-direction: column; align-items: stretch; }
+    .map-cell { width: 26px; height: 26px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <div class="heading">
+    <h1><span class="cmd">/image2map</span> Generator</h1>
+    <p>Command builder for the map-art command of your Fabric mod</p>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div class="label-line"><span class="label">Mode</span></div>
+      <div class="segmented" id="modeToggle">
+        <button data-value="create" class="active">create</button>
+        <button data-value="preview">preview</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label-line">
+        <span class="label">Resolution</span>
+        <div class="unit-switch" id="unitToggle">
+          <button data-value="pixels" class="active">Pixels</button>
+          <button data-value="blocks">Blocks</button>
+        </div>
+      </div>
+
+      <div class="res-grid">
+        <div class="res-field">
+          <label>Horizontal — <span class="value-tag" id="hVal">128</span></label>
+          <input type="number" id="hNumber" value="128" min="1" step="1">
+          <input type="range" id="hSlider" min="1" max="20" step="1" value="1" style="display:none;">
+        </div>
+        <div class="res-field">
+          <label>Vertical — <span class="value-tag" id="vVal">128</span></label>
+          <input type="number" id="vNumber" value="128" min="1" step="1">
+          <input type="range" id="vSlider" min="1" max="20" step="1" value="1" style="display:none;">
+        </div>
+      </div>
+      <div class="hint">1 block = 128 px · in block mode the slider is limited to 1–20 blocks — switch to pixels for larger values</div>
+    </div>
+
+    <div class="row">
+      <div class="label-line"><span class="label">Dithering</span></div>
+      <div class="segmented" id="ditherToggle">
+        <button data-value="none" class="active">none</button>
+        <button data-value="dither">dither</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label-line"><span class="label">Image link</span></div>
+      <input type="text" id="imageLink" placeholder="https://..." spellcheck="false">
+    </div>
+  </div>
+
+  <div class="preview-card">
+    <div class="label-line"><span class="label">Map layout preview</span></div>
+    <div class="map-grid-wrap"><div class="map-grid" id="mapGrid"></div></div>
+    <div class="map-summary" id="mapSummary"></div>
+  </div>
+
+  <div class="output-card">
+    <div class="output-command" id="outputCommand"></div>
+    <button class="copy-btn" id="copyBtn">Copy</button>
+  </div>
+
+  <div class="footer-note">/// part of <a href="https://aragasu.xyz" target="_blank" rel="noopener">aragasu.xyz</a></div>
+</div>
+
+<script>
+  "use strict";
+
+  const state = {
+    mode: 'create',
+    unit: 'pixels',
+    hPx: 128,
+    vPx: 128,
+    dither: 'none',
+    link: ''
+  };
+
+  const $ = id => document.getElementById(id);
+  const modeToggle = $('modeToggle');
+  const unitToggle = $('unitToggle');
+  const ditherToggle = $('ditherToggle');
+  const hNumber = $('hNumber');
+  const vNumber = $('vNumber');
+  const hSlider = $('hSlider');
+  const vSlider = $('vSlider');
+  const hVal = $('hVal');
+  const vVal = $('vVal');
+  const imageLink = $('imageLink');
+  const outputCommand = $('outputCommand');
+  const copyBtn = $('copyBtn');
+  const mapGrid = $('mapGrid');
+  const mapSummary = $('mapSummary');
+
+  function setupSegmented(container, key) {
+    container.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state[key] = btn.dataset.value;
+        render();
+      });
+    });
+  }
+
+  setupSegmented(modeToggle, 'mode');
+  setupSegmented(ditherToggle, 'dither');
+
+  unitToggle.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      unitToggle.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.unit = btn.dataset.value;
+      syncUnitUI();
+      render();
+    });
+  });
+
+  function syncUnitUI() {
+    const isBlocks = state.unit === 'blocks';
+    hNumber.style.display = isBlocks ? 'none' : 'block';
+    vNumber.style.display = isBlocks ? 'none' : 'block';
+    hSlider.style.display = isBlocks ? 'block' : 'none';
+    vSlider.style.display = isBlocks ? 'block' : 'none';
+
+    if (isBlocks) {
+      hSlider.value = Math.min(20, Math.max(1, Math.round(state.hPx / 128)));
+      vSlider.value = Math.min(20, Math.max(1, Math.round(state.vPx / 128)));
+    }
+  }
+
+  hNumber.addEventListener('input', () => {
+    state.hPx = Math.max(1, parseInt(hNumber.value) || 1);
+    render();
+  });
+
+  vNumber.addEventListener('input', () => {
+    state.vPx = Math.max(1, parseInt(vNumber.value) || 1);
+    render();
+  });
+
+  hSlider.addEventListener('input', () => {
+    state.hPx = parseInt(hSlider.value) * 128;
+    hNumber.value = state.hPx;
+    render();
+  });
+
+  vSlider.addEventListener('input', () => {
+    state.vPx = parseInt(vSlider.value) * 128;
+    vNumber.value = state.vPx;
+    render();
+  });
+
+  imageLink.addEventListener('input', () => {
+    state.link = imageLink.value.trim();
+    render();
+  });
+
+  function mapsAcross(px) { return Math.ceil(px / 128) || 1; }
+
+  /* live preview of how the art splits across maps */
+  function renderGrid() {
+    const cols = mapsAcross(state.hPx);
+    const rows = mapsAcross(state.vPx);
+    const total = cols * rows;
+    const hBlocks = (state.hPx / 128).toFixed(2).replace(/\.?0+$/, '');
+    const vBlocks = (state.vPx / 128).toFixed(2).replace(/\.?0+$/, '');
+
+    mapGrid.style.gridTemplateColumns = `repeat(${cols}, auto)`;
+    mapGrid.innerHTML = '';
+
+    /* cap the animation index so giant grids don't lag */
+    const maxAnim = 24;
+    let cellIdx = 0;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'map-cell';
+        /* dashed edge cells = partially used maps */
+        const isEdgeH = (c === cols - 1) && (state.hPx % 128 !== 0);
+        const isEdgeV = (r === rows - 1) && (state.vPx % 128 !== 0);
+        if (isEdgeH || isEdgeV) cell.classList.add('edge');
+        if (cellIdx < maxAnim) {
+          cell.style.animationDelay = (cellIdx * 35) + 'ms';
+        } else {
+          cell.style.animation = 'none';
+        }
+        cellIdx++;
+        mapGrid.appendChild(cell);
+      }
+    }
+
+    mapSummary.innerHTML =
+      `<b>${cols} × ${rows}</b> ${total === 1 ? 'map' : 'maps'} (${total} item${total === 1 ? '' : 's'}) · ` +
+      `${hBlocks} × ${vBlocks} blocks · ${state.hPx} × ${state.vPx} px`;
+  }
+
+  function render() {
+    hVal.textContent = state.unit === 'blocks'
+      ? `${Math.round(state.hPx / 128)} block${Math.round(state.hPx / 128) !== 1 ? 's' : ''} (${state.hPx}px)`
+      : `${state.hPx}px`;
+    vVal.textContent = state.unit === 'blocks'
+      ? `${Math.round(state.vPx / 128)} block${Math.round(state.vPx / 128) !== 1 ? 's' : ''} (${state.vPx}px)`
+      : `${state.vPx}px`;
+
+    const link = state.link || '{link}';
+    outputCommand.innerHTML =
+      `<span class="kw">/image2map</span> ${state.mode} ${state.hPx} ${state.vPx} ${state.dither} ${link}`;
+
+    renderGrid();
+  }
+
+  copyBtn.addEventListener('click', () => {
+    const link = state.link || '{link}';
+    const cmd = `/image2map ${state.mode} ${state.hPx} ${state.vPx} ${state.dither} ${link}`;
+    navigator.clipboard.writeText(cmd).then(() => {
+      copyBtn.textContent = 'Copied ✓';
+      copyBtn.classList.add('copied');
+      setTimeout(() => {
+        copyBtn.textContent = 'Copy';
+        copyBtn.classList.remove('copied');
+      }, 1200);
+    });
+  });
+
+  syncUnitUI();
+  render();
+</script>
+
+</body>
+</html>

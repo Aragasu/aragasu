@@ -1,0 +1,12 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor junk
+*.log
+.vscode/*
+!.vscode/extensions.json
+
+# Never commit these
+node_modules/
