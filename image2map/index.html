@@ -247,9 +247,9 @@
 
   .map-grid-wrap {
     display: flex;
-    justify-content: center;
     padding: 10px 0 14px;
-    overflow-x: auto;
+    overflow: auto;
+    max-height: 640px;
   }
 
   .map-grid {
@@ -258,6 +258,7 @@
     display: grid;
     gap: 3px;
     max-width: 100%;
+    margin: auto;
   }
 
   .map-cell {
@@ -288,6 +289,14 @@
   }
 
   .map-cell.edge .map-coord { color: rgba(232, 230, 240, .42); }
+
+  .map-grid-note {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+    padding: 16px 8px;
+  }
 
   @keyframes cell-in {
     from { opacity: 0; transform: scale(.7); }
@@ -408,15 +417,15 @@
         <div class="res-field">
           <label>Horizontal — <span class="value-tag" id="hVal">128</span></label>
           <input type="number" id="hNumber" value="128" min="1" step="1">
-          <input type="range" id="hSlider" min="1" max="20" step="1" value="1" style="display:none;">
+          <input type="range" id="hSlider" min="1" max="100" step="1" value="1" style="display:none;">
         </div>
         <div class="res-field">
           <label>Vertical — <span class="value-tag" id="vVal">128</span></label>
           <input type="number" id="vNumber" value="128" min="1" step="1">
-          <input type="range" id="vSlider" min="1" max="20" step="1" value="1" style="display:none;">
+          <input type="range" id="vSlider" min="1" max="100" step="1" value="1" style="display:none;">
         </div>
       </div>
-      <div class="hint">1 block = 128 px · in block mode the slider is limited to 1–20 blocks — switch to pixels for larger values</div>
+      <div class="hint">1 block = 128 px · in block mode the slider is limited to 1–100 blocks — switch to pixels for even larger values</div>
     </div>
 
     <div class="row">
@@ -508,8 +517,8 @@
     vSlider.style.display = isBlocks ? 'block' : 'none';
 
     if (isBlocks) {
-      hSlider.value = Math.min(20, Math.max(1, Math.round(state.hPx / 128)));
-      vSlider.value = Math.min(20, Math.max(1, Math.round(state.vPx / 128)));
+      hSlider.value = Math.min(100, Math.max(1, Math.round(state.hPx / 128)));
+      vSlider.value = Math.min(100, Math.max(1, Math.round(state.vPx / 128)));
     }
   }
 
@@ -543,6 +552,8 @@
   function mapsAcross(px) { return Math.ceil(px / 128) || 1; }
 
   /* live preview of how the art splits across maps */
+  let lastGridKey = '';
+
   function renderGrid() {
     const cols = mapsAcross(state.hPx);
     const rows = mapsAcross(state.vPx);
@@ -550,17 +561,37 @@
     const hBlocks = (state.hPx / 128).toFixed(2).replace(/\.?0+$/, '');
     const vBlocks = (state.vPx / 128).toFixed(2).replace(/\.?0+$/, '');
 
-    mapGrid.style.gridTemplateColumns = `repeat(${cols}, auto)`;
-    mapGrid.innerHTML = '';
+    mapSummary.innerHTML =
+      `<b>${cols} × ${rows}</b> ${total === 1 ? 'map' : 'maps'} (${total} item${total === 1 ? '' : 's'}) · ` +
+      `${hBlocks} × ${vBlocks} blocks · ${state.hPx} × ${state.vPx} px`;
 
-    /* shrink cells on big grids so the coordinates stay readable */
-    if (cols > 8 || rows > 8) {
+    /* the grid only needs redrawing when the map layout itself changes */
+    const gridKey = `${cols}x${rows}:${state.hPx % 128}:${state.vPx % 128}`;
+    if (gridKey === lastGridKey) return;
+    lastGridKey = gridKey;
+
+    mapGrid.style.removeProperty('--cell');
+    mapGrid.style.removeProperty('--coord-size');
+
+    /* past 50 maps per axis a cell-by-cell preview would be useless */
+    if (cols > 50 || rows > 50) {
+      mapGrid.style.gridTemplateColumns = '';
+      mapGrid.innerHTML = `<div class="map-grid-note">${cols} × ${rows} maps (${total.toLocaleString('en-US')} items) — too large to draw</div>`;
+      return;
+    }
+
+    mapGrid.style.gridTemplateColumns = `repeat(${cols}, auto)`;
+
+    /* shrink cells on big grids; past 20 per axis the labels no longer fit */
+    const dense = cols > 20 || rows > 20;
+    if (dense) {
+      mapGrid.style.setProperty('--cell', '18px');
+    } else if (cols > 8 || rows > 8) {
       mapGrid.style.setProperty('--cell', '28px');
       mapGrid.style.setProperty('--coord-size', '8px');
-    } else {
-      mapGrid.style.removeProperty('--cell');
-      mapGrid.style.removeProperty('--coord-size');
     }
+
+    mapGrid.innerHTML = '';
 
     /* cap the animation index so giant grids don't lag */
     const maxAnim = 24;
@@ -576,10 +607,12 @@
         if (isEdgeH || isEdgeV) cell.classList.add('edge');
         /* coordinate label: column/row, 0/0 = top-left map */
         cell.title = `map ${c}/${r}`;
-        const coord = document.createElement('span');
-        coord.className = 'map-coord';
-        coord.textContent = `${c}/${r}`;
-        cell.appendChild(coord);
+        if (!dense) {
+          const coord = document.createElement('span');
+          coord.className = 'map-coord';
+          coord.textContent = `${c}/${r}`;
+          cell.appendChild(coord);
+        }
         if (cellIdx < maxAnim) {
           cell.style.animationDelay = (cellIdx * 35) + 'ms';
         } else {
@@ -590,9 +623,6 @@
       }
     }
 
-    mapSummary.innerHTML =
-      `<b>${cols} × ${rows}</b> ${total === 1 ? 'map' : 'maps'} (${total} item${total === 1 ? '' : 's'}) · ` +
-      `${hBlocks} × ${vBlocks} blocks · ${state.hPx} × ${state.vPx} px`;
   }
 
   function render() {
