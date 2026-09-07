@@ -249,17 +249,23 @@
     display: flex;
     justify-content: center;
     padding: 10px 0 14px;
+    overflow-x: auto;
   }
 
   .map-grid {
+    --cell: 34px;
+    --coord-size: 9px;
     display: grid;
     gap: 3px;
     max-width: 100%;
   }
 
   .map-cell {
-    width: 34px;
-    height: 34px;
+    width: var(--cell);
+    height: var(--cell);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 5px;
     background: linear-gradient(135deg, rgba(124, 92, 252, .28), rgba(124, 92, 252, .12));
     border: 1px solid rgba(124, 92, 252, .35);
@@ -271,6 +277,17 @@
     border-style: dashed;
     opacity: .65;
   }
+
+  .map-coord {
+    font-family: var(--mono);
+    font-size: var(--coord-size);
+    font-weight: 500;
+    color: rgba(232, 230, 240, .78);
+    letter-spacing: -.02em;
+    pointer-events: none;
+  }
+
+  .map-cell.edge .map-coord { color: rgba(232, 230, 240, .42); }
 
   @keyframes cell-in {
     from { opacity: 0; transform: scale(.7); }
@@ -287,6 +304,14 @@
   .map-summary b {
     color: var(--accent);
     font-weight: 600;
+  }
+
+  .map-hint {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #55536a;
+    margin-top: 6px;
   }
 
   /* output */
@@ -345,7 +370,7 @@
   @media (max-width: 480px) {
     .res-grid { grid-template-columns: 1fr; }
     .output-card { flex-direction: column; align-items: stretch; }
-    .map-cell { width: 26px; height: 26px; }
+    .map-grid { --cell: 26px; --coord-size: 8px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -412,6 +437,7 @@
     <div class="label-line"><span class="label">Map layout preview</span></div>
     <div class="map-grid-wrap"><div class="map-grid" id="mapGrid"></div></div>
     <div class="map-summary" id="mapSummary"></div>
+    <div class="map-hint">map coordinates = column/row · 0/0 is the top-left map</div>
   </div>
 
   <div class="output-card">
@@ -527,6 +553,15 @@
     mapGrid.style.gridTemplateColumns = `repeat(${cols}, auto)`;
     mapGrid.innerHTML = '';
 
+    /* shrink cells on big grids so the coordinates stay readable */
+    if (cols > 8 || rows > 8) {
+      mapGrid.style.setProperty('--cell', '28px');
+      mapGrid.style.setProperty('--coord-size', '8px');
+    } else {
+      mapGrid.style.removeProperty('--cell');
+      mapGrid.style.removeProperty('--coord-size');
+    }
+
     /* cap the animation index so giant grids don't lag */
     const maxAnim = 24;
     let cellIdx = 0;
@@ -539,6 +574,12 @@
         const isEdgeH = (c === cols - 1) && (state.hPx % 128 !== 0);
         const isEdgeV = (r === rows - 1) && (state.vPx % 128 !== 0);
         if (isEdgeH || isEdgeV) cell.classList.add('edge');
+        /* coordinate label: column/row, 0/0 = top-left map */
+        cell.title = `map ${c}/${r}`;
+        const coord = document.createElement('span');
+        coord.className = 'map-coord';
+        coord.textContent = `${c}/${r}`;
+        cell.appendChild(coord);
         if (cellIdx < maxAnim) {
           cell.style.animationDelay = (cellIdx * 35) + 'ms';
         } else {
