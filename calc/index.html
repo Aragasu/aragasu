@@ -1,0 +1,169 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculator (REAL)</title>
+
+    <style>
+        body {
+            background: #ff00ff;
+            font-family: Comic Sans MS, cursive;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .calculator {
+            width: 320px;
+            margin: auto;
+            background: yellow;
+            border: 12px dotted red;
+            padding: 20px;
+            transform: rotate(-2deg);
+            box-shadow: 15px 15px 0px lime;
+        }
+
+        h1 {
+            color: red;
+            font-size: 32px;
+            text-shadow: 3px 3px blue;
+        }
+
+        #display {
+            width: 280px;
+            height: 60px;
+            font-size: 28px;
+            background: white;
+            border: 8px double blue;
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 65px;
+            height: 60px;
+            margin: 3px;
+            font-size: 24px;
+            font-family: Comic Sans MS;
+            background: orange;
+            border: 5px outset red;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: lime;
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        button:active {
+            border: 5px inset red;
+        }
+
+        .equals {
+            background: cyan;
+            width: 140px;
+        }
+
+        .warning {
+            color: red;
+            font-size: 13px;
+            animation: blink 0.5s infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="calculator">
+
+    <h1>🧮 CALCULATOR</h1>
+
+    <p class="warning">⚠️ VERY ADVANCED MATHEMATICS ⚠️</p>
+
+    <input id="display" value="0" readonly>
+
+    <br>
+
+    <button onclick="press('7')">7</button>
+    <button onclick="press('8')">8</button>
+    <button onclick="press('9')">9</button>
+    <button onclick="press('/')">÷</button>
+
+    <br>
+
+    <button onclick="press('4')">4</button>
+    <button onclick="press('5')">5</button>
+    <button onclick="press('6')">6</button>
+    <button onclick="press('*')">×</button>
+
+    <br>
+
+    <button onclick="press('1')">1</button>
+    <button onclick="press('2')">2</button>
+    <button onclick="press('3')">3</button>
+    <button onclick="press('-')">−</button>
+
+    <br>
+
+    <button onclick="press('0')">0</button>
+    <button onclick="press('.')">.</button>
+    <button onclick="calculate()">=</button>
+    <button onclick="press('+')">+</button>
+
+    <br>
+
+    <button onclick="clearDisplay()" style="width:280px;background:red;color:white;">
+        DELETE EVERYTHING 😱
+    </button>
+
+    <p>Made with approximately 4 minutes of experience</p>
+</div>
+
+<script>
+    let display = document.getElementById("display");
+
+    function press(value) {
+
+        // Because apparently this is necessary
+        if (display.value === "0") {
+            display.value = "";
+        }
+
+        display.value += value;
+
+        // Randomly make it slightly worse
+        if (Math.random() < 0.05) {
+            display.value += "7";
+        }
+    }
+
+    function calculate() {
+
+        try {
+            let result = eval(display.value);
+
+            // 1% chance of ruining everything
+            if (Math.random() < 0.01) {
+                result = result + 1;
+            }
+
+            display.value = result;
+
+        } catch (error) {
+            display.value = "ERROR LOL";
+        }
+    }
+
+    function clearDisplay() {
+        display.value = "0";
+    }
+</script>
+
+</body>
+</html>
+```
